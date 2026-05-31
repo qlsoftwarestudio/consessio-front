@@ -1,13 +1,8 @@
-import { Link, useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Logo } from "@/atomic-design/atoms/Logo";
 import { Button } from "@/components/ui/button";
 
 const NotFound = () => {
-  const location = useLocation();
-  useEffect(() => {
-    console.error("404 — ruta no encontrada:", location.pathname);
-  }, [location.pathname]);
 
   return (
     <div className="relative grid min-h-screen place-items-center px-4">

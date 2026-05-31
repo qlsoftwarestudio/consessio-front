@@ -21,20 +21,12 @@ function normalizeUrl(url: string | undefined): string | undefined {
 
 const rawApiUrl = normalizeUrl(import.meta.env.VITE_API_BASE_URL as string | undefined);
 
-// eslint-disable-next-line no-console
-console.log("[Concessio] VITE_API_BASE_URL raw:", JSON.stringify(import.meta.env.VITE_API_BASE_URL), "normalized:", rawApiUrl);
-
 const enrichedEnv = {
   ...import.meta.env,
   VITE_API_BASE_URL: rawApiUrl || devFallbackUrl,
 };
 
 const parsed = schema.safeParse(enrichedEnv);
-
-if (!parsed.success) {
-  // eslint-disable-next-line no-console
-  console.error("[Concessio] Variables de entorno inválidas:", parsed.error.flatten().fieldErrors);
-}
 
 const data = parsed.success
   ? parsed.data
@@ -43,14 +35,6 @@ const data = parsed.success
       VITE_USE_MOCK_API: false,
       VITE_AUTH_STORAGE_KEY: "concessio_auth",
     };
-
-if (!rawApiUrl && import.meta.env.PROD) {
-  // eslint-disable-next-line no-console
-  console.error(
-    "[Concessio] ERROR CRÍTICO: VITE_API_BASE_URL no está definida en producción. " +
-      "Configurá la variable en el dashboard de Vercel (Project Settings → Environment Variables)."
-  );
-}
 
 export const env = {
   apiBaseUrl: data.VITE_API_BASE_URL.replace(/\/$/, ""),
