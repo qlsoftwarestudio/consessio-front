@@ -11,10 +11,18 @@ const schema = z.object({
   VITE_AUTH_STORAGE_KEY: z.string().min(1).default("concessio_auth"),
 });
 
-const rawApiUrl = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim();
+function normalizeUrl(url: string | undefined): string | undefined {
+  if (!url) return undefined;
+  const trimmed = url.trim();
+  if (!trimmed) return undefined;
+  if (/^https?:\/\//.test(trimmed)) return trimmed;
+  return `https://${trimmed}`;
+}
+
+const rawApiUrl = normalizeUrl(import.meta.env.VITE_API_BASE_URL as string | undefined);
 
 // eslint-disable-next-line no-console
-console.log("[Concessio] VITE_API_BASE_URL raw:", JSON.stringify(import.meta.env.VITE_API_BASE_URL));
+console.log("[Concessio] VITE_API_BASE_URL raw:", JSON.stringify(import.meta.env.VITE_API_BASE_URL), "normalized:", rawApiUrl);
 
 const enrichedEnv = {
   ...import.meta.env,
