@@ -4,7 +4,7 @@ const schema = z.object({
   VITE_API_BASE_URL: z.string().url().default("http://localhost:8080"),
   VITE_USE_MOCK_API: z
     .enum(["true", "false"])
-    .default("true")
+    .default("false")
     .transform((v) => v === "true"),
   VITE_AUTH_STORAGE_KEY: z.string().min(1).default("concessio_auth"),
 });
@@ -20,7 +20,7 @@ const data = parsed.success
   ? parsed.data
   : {
       VITE_API_BASE_URL: "http://localhost:8080",
-      VITE_USE_MOCK_API: true,
+      VITE_USE_MOCK_API: false,
       VITE_AUTH_STORAGE_KEY: "concessio_auth",
     };
 

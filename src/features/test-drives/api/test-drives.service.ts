@@ -54,7 +54,19 @@ export const testDrivesService = {
     return fromApiTestDrive(res, orgId());
   },
 
-  async complete(id: string, feedback?: string) {
+  async confirm(id: string) {
+    if (env.useMockApi) {
+      useAppStore.setState({
+        testDrives: useAppStore.getState().testDrives.map((t) =>
+          t.id === id ? { ...t, status: "confirmado" as const } : t,
+        ),
+      });
+      return;
+    }
+    await http(ENDPOINTS.testDrives.confirm(id), { method: "PUT" });
+  },
+
+  async complete(id: string, notes?: string) {
     if (env.useMockApi) {
       useAppStore.setState({
         testDrives: useAppStore.getState().testDrives.map((t) =>
@@ -63,7 +75,7 @@ export const testDrivesService = {
       });
       return;
     }
-    await http(ENDPOINTS.testDrives.complete(id), { method: "POST", body: { feedback } });
+    await http(ENDPOINTS.testDrives.complete(id), { method: "PUT", body: { notes } });
   },
 
   async cancel(id: string, reason: string) {
@@ -75,6 +87,6 @@ export const testDrivesService = {
       });
       return;
     }
-    await http(ENDPOINTS.testDrives.cancel(id), { method: "POST", query: { reason } });
+    await http(ENDPOINTS.testDrives.cancel(id), { method: "PUT", body: { notes: reason } });
   },
 };

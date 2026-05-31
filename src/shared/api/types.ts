@@ -22,17 +22,15 @@ export interface ApiError {
 }
 
 // ==================== Auth ====================
-export type ApiRole = "ADMIN" | "GERENTE" | "VENDEDOR" | "ADMINISTRATIVO";
+export type ApiRole = "GERENTE" | "SUPERVISOR" | "VENDEDORA" | "PLANES" | "ADMIN_SISTEMA";
 
 export interface ApiAuthResponse {
+  message: string;
   token: string;
-  email: string;
-  role: ApiRole;
-  tenantId: number;
-  userId: number;
 }
 
 export interface ApiLoginPayload {
+  tenantCode: string;
   email: string;
   password: string;
 }
@@ -53,7 +51,7 @@ export interface ApiUser {
   email: string;
   role: ApiRole;
   phone?: string;
-  active?: boolean;
+  isActive?: boolean;
   createdAt?: string;
 }
 
@@ -63,6 +61,7 @@ export interface ApiUserCreatePayload {
   email: string;
   password: string;
   role: ApiRole;
+  isActive: boolean;
   phone?: string;
 }
 
@@ -72,9 +71,14 @@ export type ApiLeadStatus =
   | "CONTACTADO"
   | "EN_SEGUIMIENTO"
   | "COTIZADO"
-  | "TEST_DRIVE"
+  | "TEST_DRIVE_AGENDADO"
+  | "TEST_DRIVE_COMPLETADO"
   | "NEGOCIACION"
+  | "RESERVADO"
+  | "DOCUMENTACION_COMPLETA"
   | "ENTREGADO"
+  | "NO_CONTESTA"
+  | "CANCELADO"
   | "DESCARTADO";
 
 export type ApiLeadSource =
@@ -104,10 +108,12 @@ export interface ApiLead {
   city?: string;
   status: ApiLeadStatus;
   source: ApiLeadSource;
+  vehicleInterest?: string;
   notes?: string;
   assignedTo?: ApiLeadAssignee | null;
   createdAt: string;
   updatedAt?: string;
+  lastContactAt?: string | null;
 }
 
 export interface ApiLeadCreatePayload {
@@ -125,7 +131,7 @@ export interface ApiLeadCreatePayload {
 }
 
 // ==================== Vehicle ====================
-export type ApiVehicleStatus = "DISPONIBLE" | "RESERVADO" | "VENDIDO" | "NO_DISPONIBLE";
+export type ApiVehicleStatus = "DISPONIBLE" | "RESERVADO" | "VENDIDO" | "EN_TRANSITO" | "EN_PREPARACION" | "NO_DISPONIBLE";
 
 export interface ApiVehicle {
   id: number;
@@ -162,6 +168,7 @@ export interface ApiQuotation {
   id: number;
   type: ApiQuotationType;
   vehicleModel: string;
+  vehicleVin?: string;
   priceList: number;
   discount: number;
   priceFinal: number;
@@ -178,6 +185,7 @@ export interface ApiQuotation {
   totalFinancingCost?: number;
   notes?: string;
   lead?: { id: number; firstName?: string; lastName?: string };
+  createdBy?: { id: number; name?: string; lastname?: string };
   validUntil?: string;
   sentToCustomer?: boolean;
   sentAt?: string | null;
@@ -202,16 +210,22 @@ export interface ApiQuotationCreatePayload {
 
 // ==================== Activity ====================
 export type ApiActivityType =
-  | "CREACION"
-  | "ACTUALIZACION"
-  | "COTIZACION"
-  | "TEST_DRIVE"
+  | "LEAD_CREATED"
+  | "LEAD_UPDATED"
+  | "LEAD_ASSIGNED"
+  | "STATUS_CHANGED"
   | "LLAMADA"
+  | "WHATSAPP"
   | "EMAIL"
-  | "VISITA"
-  | "ESTADO_CAMBIADO"
-  | "ASIGNACION"
-  | "NOTA";
+  | "COTIZACION"
+  | "TEST_DRIVE_AGENDADO"
+  | "TEST_DRIVE_COMPLETADO"
+  | "DOCUMENTO_SUBIDO"
+  | "DOCUMENTO_VERIFICADO"
+  | "NOTA"
+  | "RESERVA"
+  | "VENTA"
+  | "EXCEL_UPLOAD";
 
 export interface ApiActivity {
   id: number;
@@ -223,7 +237,7 @@ export interface ApiActivity {
 }
 
 // ==================== Test Drive ====================
-export type ApiTestDriveStatus = "PENDIENTE" | "COMPLETADO" | "CANCELADO" | "NO_ASISTIO";
+export type ApiTestDriveStatus = "AGENDADO" | "CONFIRMADO" | "COMPLETADO" | "CANCELADO" | "NO_SHOW";
 
 export interface ApiTestDrive {
   id: number;
@@ -248,13 +262,19 @@ export interface ApiTestDriveCreatePayload {
 
 // ==================== Document ====================
 export type ApiDocumentType =
-  | "DNI"
-  | "LICENCIA"
-  | "PASAPORTE"
-  | "COMPROBANTE_DOMICILIO"
-  | "RECIBO_SUELDO"
-  | "FICHA_INSCRIPCION"
-  | "CONTRATO"
+  | "DNI_FRENTE"
+  | "DNI_DORSO"
+  | "CUIL_CUIT"
+  | "RECIBO_SUELDO_1"
+  | "RECIBO_SUELDO_2"
+  | "RECIBO_SUELDO_3"
+  | "SERVICIO"
+  | "GARANTE_DNI_FRENTE"
+  | "GARANTE_DNI_DORSO"
+  | "GARANTE_CUIL"
+  | "GARANTE_RECIBO_1"
+  | "CONTRATO_RESERVA"
+  | "ORDEN_COMPRA"
   | "OTRO";
 
 export interface ApiDocument {
@@ -265,15 +285,22 @@ export interface ApiDocument {
   contentType: string;
   size: number;
   uploadedAt: string;
+  verified?: boolean;
+  verifiedAt?: string;
 }
 
 // ==================== Excel ====================
-export interface ApiExcelUploadResult {
-  success: boolean;
-  processed: number;
-  duplicates: number;
-  errors: number;
-  message: string;
+export type ApiExcelUploadStatus = "UPLOADED" | "PROCESSING" | "COMPLETED" | "ERROR";
+
+export interface ApiExcelUpload {
+  id: number;
+  filename: string;
+  status: ApiExcelUploadStatus;
+  processedCount?: number;
+  errorCount?: number;
+  errorMessage?: string;
+  createdAt: string;
+  completedAt?: string;
 }
 
 // ==================== Dashboard ====================

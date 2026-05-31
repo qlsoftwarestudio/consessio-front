@@ -103,6 +103,20 @@ export const vehiclesService = {
     return fromApiVehicle(res, orgId());
   },
 
+  async updateStatus(id: string, status: VehicleStatus): Promise<void> {
+    if (env.useMockApi) {
+      const list = useAppStore.getState().vehicles.map((v) =>
+        v.id === id ? { ...v, status } : v,
+      );
+      useAppStore.setState({ vehicles: list });
+      return;
+    }
+    await http(ENDPOINTS.vehicles.status(id), {
+      method: "PUT",
+      body: toApiVehicleStatus(status),
+    });
+  },
+
   async reserve(id: string): Promise<void> {
     if (env.useMockApi) {
       const list = useAppStore.getState().vehicles.map((v) =>
@@ -111,7 +125,7 @@ export const vehiclesService = {
       useAppStore.setState({ vehicles: list });
       return;
     }
-    await http(ENDPOINTS.vehicles.reserve(id), { method: "POST" });
+    await http(ENDPOINTS.vehicles.reserve(id), { method: "PUT" });
   },
 
   async sell(id: string): Promise<void> {
@@ -122,6 +136,25 @@ export const vehiclesService = {
       useAppStore.setState({ vehicles: list });
       return;
     }
-    await http(ENDPOINTS.vehicles.sell(id), { method: "POST" });
+    await http(ENDPOINTS.vehicles.sell(id), { method: "PUT" });
+  },
+
+  async release(id: string): Promise<void> {
+    if (env.useMockApi) {
+      const list = useAppStore.getState().vehicles.map((v) =>
+        v.id === id ? { ...v, status: "disponible" as VehicleStatus } : v,
+      );
+      useAppStore.setState({ vehicles: list });
+      return;
+    }
+    await http(ENDPOINTS.vehicles.release(id), { method: "PUT" });
+  },
+
+  async checkAvailability(id: string): Promise<boolean> {
+    if (env.useMockApi) {
+      const v = useAppStore.getState().vehicles.find((v) => v.id === id);
+      return v?.status === "disponible";
+    }
+    return http<boolean>(ENDPOINTS.vehicles.availability(id));
   },
 };

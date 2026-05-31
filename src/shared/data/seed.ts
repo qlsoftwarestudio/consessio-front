@@ -21,10 +21,10 @@ export const seedOrganization: Organization = {
 };
 
 export const seedMembers: Member[] = [
-  { id: "m1", organizationId: ORG_ID, fullName: "Lucía Fernández", email: "lucia@demo.com", role: "owner" },
-  { id: "m2", organizationId: ORG_ID, fullName: "Martín Pérez", email: "martin@demo.com", role: "manager" },
-  { id: "m3", organizationId: ORG_ID, fullName: "Carla Giménez", email: "carla@demo.com", role: "seller" },
-  { id: "m4", organizationId: ORG_ID, fullName: "Diego Ruiz", email: "diego@demo.com", role: "seller" },
+  { id: "m1", organizationId: ORG_ID, fullName: "Lucía Fernández", email: "lucia@demo.com", role: "ADMIN_SISTEMA" },
+  { id: "m2", organizationId: ORG_ID, fullName: "Martín Pérez", email: "martin@demo.com", role: "GERENTE" },
+  { id: "m3", organizationId: ORG_ID, fullName: "Carla Giménez", email: "carla@demo.com", role: "VENDEDORA" },
+  { id: "m4", organizationId: ORG_ID, fullName: "Diego Ruiz", email: "diego@demo.com", role: "VENDEDORA" },
 ];
 
 export const seedVehicles: Vehicle[] = [
@@ -42,7 +42,7 @@ export const seedLeads: Lead[] = [
   { id: "l1", organizationId: ORG_ID, fullName: "Juan Cabrera", phone: "1144556677", email: "juan.c@mail.com", status: "new", source: "instagram", interestVehicleId: "v1", createdAt: daysAgo(0), updatedAt: daysAgo(0), assignedTo: "m3" },
   { id: "l2", organizationId: ORG_ID, fullName: "María López", phone: "1133221100", email: "maria@mail.com", status: "contacted", source: "web", interestVehicleId: "v6", createdAt: daysAgo(1), updatedAt: daysAgo(0), assignedTo: "m3" },
   { id: "l3", organizationId: ORG_ID, fullName: "Pablo Sánchez", phone: "1166778899", status: "qualified", source: "whatsapp", interestVehicleId: "v2", createdAt: daysAgo(2), updatedAt: daysAgo(1), assignedTo: "m4" },
-  { id: "l4", organizationId: ORG_ID, fullName: "Sofía Romero", phone: "1199887766", email: "sofi@mail.com", status: "test-drive", source: "showroom", interestVehicleId: "v3", createdAt: daysAgo(3), updatedAt: daysAgo(0), assignedTo: "m4" },
+  { id: "l4", organizationId: ORG_ID, fullName: "Sofía Romero", phone: "1199887766", email: "sofi@mail.com", status: "test-drive-agendado", source: "showroom", interestVehicleId: "v3", createdAt: daysAgo(3), updatedAt: daysAgo(0), assignedTo: "m4" },
   { id: "l5", organizationId: ORG_ID, fullName: "Ricardo Funes", phone: "1155443322", status: "quoted", source: "referido", interestVehicleId: "v8", createdAt: daysAgo(5), updatedAt: daysAgo(1), assignedTo: "m3" },
   { id: "l6", organizationId: ORG_ID, fullName: "Andrea Vidal", phone: "1122334455", email: "andrea@mail.com", status: "won", source: "mercadolibre", interestVehicleId: "v7", createdAt: daysAgo(8), updatedAt: daysAgo(2), assignedTo: "m4" },
   { id: "l7", organizationId: ORG_ID, fullName: "Hernán Castro", phone: "1177665544", status: "lost", source: "facebook", interestVehicleId: "v4", createdAt: daysAgo(10), updatedAt: daysAgo(4), assignedTo: "m3" },
@@ -67,7 +67,7 @@ export const seedTestDrives: TestDrive[] = [
 export const seedActivities: Activity[] = [
   { id: "a1", organizationId: ORG_ID, leadId: "l1", type: "lead_created", message: "Nuevo lead desde Instagram", actorId: "m3", createdAt: daysAgo(0) },
   { id: "a2", organizationId: ORG_ID, leadId: "l2", type: "whatsapp", message: "Mensaje de WhatsApp enviado", actorId: "m3", createdAt: daysAgo(0) },
-  { id: "a3", organizationId: ORG_ID, leadId: "l4", type: "test_drive", message: "Test drive agendado para mañana", actorId: "m4", createdAt: daysAgo(0) },
+  { id: "a3", organizationId: ORG_ID, leadId: "l4", type: "test_drive_agendado", message: "Test drive agendado para mañana", actorId: "m4", createdAt: daysAgo(0) },
   { id: "a4", organizationId: ORG_ID, leadId: "l5", type: "quotation", message: "Cotización financiada enviada", actorId: "m3", createdAt: daysAgo(2) },
   { id: "a5", organizationId: ORG_ID, leadId: "l6", type: "status_changed", message: "Lead marcado como Ganado 🎉", actorId: "m4", createdAt: daysAgo(2) },
   { id: "a6", organizationId: ORG_ID, leadId: "l3", type: "call", message: "Llamada de calificación", actorId: "m4", createdAt: daysAgo(1) },

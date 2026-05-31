@@ -8,6 +8,7 @@ import type {
   ApiPlanType,
   ApiQuotation,
   ApiQuotationCreatePayload,
+  ApiQuotationType,
 } from "@/shared/api/types";
 import type { Quotation, QuotationType } from "@/shared/types/domain";
 
@@ -105,6 +106,48 @@ export const quotationsService = {
     return fromApiQuotation(res, orgId());
   },
 
+  async update(id: string, input: Partial<CreateQuotationInput>): Promise<Quotation> {
+    if (env.useMockApi) {
+      const q = useAppStore.getState().quotations.find((q) => q.id === id);
+      if (!q) throw new Error("Quotation not found");
+      const updated: Quotation = { ...q, ...input, id };
+      useAppStore.setState({
+        quotations: useAppStore.getState().quotations.map((q) => (q.id === id ? updated : q)),
+      });
+      return updated;
+    }
+    const payload: Partial<ApiQuotationCreatePayload> = {
+      type: input.type ? toApiQuotationType(input.type) : undefined,
+      vehicleModel: input.vehicleModel,
+      priceList: input.listPriceArs,
+      discount: input.discountArs,
+      priceFinal: input.totalArs,
+      downPayment: input.downPaymentArs,
+      financingMonths: input.installments,
+      interestRate: input.annualRate,
+      bank: input.bank,
+      planType: input.planType,
+      planInstallments: input.planInstallments,
+      notes: input.notes,
+      lead: input.leadId ? { id: Number(input.leadId) } : undefined,
+    };
+    const res = await http<ApiQuotation>(ENDPOINTS.quotations.byId(id), {
+      method: "PUT",
+      body: payload,
+    });
+    return fromApiQuotation(res, orgId());
+  },
+
+  async delete(id: string): Promise<void> {
+    if (env.useMockApi) {
+      useAppStore.setState({
+        quotations: useAppStore.getState().quotations.filter((q) => q.id !== id),
+      });
+      return;
+    }
+    await http(ENDPOINTS.quotations.byId(id), { method: "DELETE" });
+  },
+
   async markSent(id: string): Promise<void> {
     if (env.useMockApi) {
       const list = useAppStore.getState().quotations.map((q) =>
@@ -114,5 +157,24 @@ export const quotationsService = {
       return;
     }
     await http(ENDPOINTS.quotations.send(id), { method: "POST" });
+  },
+
+  async valid(params: { page?: number; size?: number } = {}) {
+    const page = params.page ?? 0;
+    const size = params.size ?? 20;
+    const res = await http<ApiPage<ApiQuotation>>(ENDPOINTS.quotations.valid, {
+      query: { page, size },
+    });
+    return {
+      items: res.content.map((q) => fromApiQuotation(q, orgId())),
+      total: res.totalElements,
+      page: res.number,
+      size: res.size,
+      totalPages: res.totalPages,
+    };
+  },
+
+  async statsByType(): Promise<Partial<Record<ApiQuotationType, number>>> {
+    return http(ENDPOINTS.quotations.statsByType);
   },
 };

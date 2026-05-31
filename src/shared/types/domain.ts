@@ -2,9 +2,15 @@ export type LeadStatus =
   | "new"
   | "contacted"
   | "qualified"
-  | "test-drive"
+  | "test-drive-agendado"
+  | "test-drive-completado"
   | "quoted"
+  | "negociacion"
+  | "reservado"
+  | "documentacion-completa"
   | "won"
+  | "no-contesta"
+  | "cancelado"
   | "lost";
 
 export type LeadSource =
@@ -16,15 +22,15 @@ export type LeadSource =
   | "showroom"
   | "mercadolibre";
 
-export type VehicleStatus = "disponible" | "reservado" | "vendido";
+export type VehicleStatus = "disponible" | "reservado" | "vendido" | "en-transito" | "en-preparacion" | "no-disponible";
 export type VehicleCondition = "0km" | "usado";
 
 export type QuotationType = "contado" | "financiado" | "plan-ahorro";
 export type QuotationStatus = "borrador" | "enviada" | "aceptada" | "rechazada";
 
-export type TestDriveStatus = "agendado" | "realizado" | "cancelado" | "no-asistio";
+export type TestDriveStatus = "agendado" | "confirmado" | "realizado" | "cancelado" | "no-asistio";
 
-export type AppRole = "owner" | "manager" | "seller";
+export type AppRole = "ADMIN_SISTEMA" | "GERENTE" | "SUPERVISOR" | "VENDEDORA" | "PLANES";
 
 export interface Organization {
   id: string;
@@ -50,6 +56,7 @@ export interface Lead {
   phone: string;
   status: LeadStatus;
   source: LeadSource;
+  vehicleInterest?: string;
   interestVehicleId?: string;
   interestNote?: string;
   assignedTo?: string; // member id
@@ -107,7 +114,23 @@ export interface Activity {
   id: string;
   organizationId: string;
   leadId?: string;
-  type: "lead_created" | "status_changed" | "note" | "quotation" | "test_drive" | "call" | "whatsapp";
+  type:
+    | "lead_created"
+    | "lead_updated"
+    | "lead_assigned"
+    | "status_changed"
+    | "call"
+    | "whatsapp"
+    | "email"
+    | "quotation"
+    | "test_drive_agendado"
+    | "test_drive_completado"
+    | "documento_subido"
+    | "documento_verificado"
+    | "note"
+    | "reserva"
+    | "venta"
+    | "excel_upload";
   message: string;
   actorId?: string;
   createdAt: string;

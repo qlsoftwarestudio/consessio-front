@@ -125,8 +125,8 @@ export const leadsService = {
       return;
     }
     await http(ENDPOINTS.leads.setStatus(id), {
-      method: "POST",
-      query: { status: toApiLeadStatus(status) },
+      method: "PUT",
+      body: toApiLeadStatus(status),
     });
   },
 
@@ -135,9 +135,8 @@ export const leadsService = {
       useAppStore.getState().updateLead(id, { assignedTo: userId });
       return;
     }
-    await http(ENDPOINTS.leads.assign(id), {
-      method: "POST",
-      query: { userId: Number(userId) },
+    await http(ENDPOINTS.leads.assign(id, userId), {
+      method: "PUT",
     });
   },
 

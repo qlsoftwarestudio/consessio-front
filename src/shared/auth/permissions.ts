@@ -21,7 +21,7 @@ export const CAPABILITIES = [
 export type Capability = (typeof CAPABILITIES)[number];
 
 const MATRIX: Record<AppRole, Capability[]> = {
-  ADMIN: [
+  ADMIN_SISTEMA: [
     "manageUsers",
     "viewUsers",
     "manageOrganization",
@@ -35,6 +35,19 @@ const MATRIX: Record<AppRole, Capability[]> = {
     "createTestDrive",
   ],
   GERENTE: [
+    "manageUsers",
+    "viewUsers",
+    "manageOrganization",
+    "seeAllLeads",
+    "manageLeads",
+    "reassignLeads",
+    "importLeads",
+    "manageVehicles",
+    "changeVehicleStock",
+    "createQuotation",
+    "createTestDrive",
+  ],
+  SUPERVISOR: [
     "viewUsers",
     "seeAllLeads",
     "manageLeads",
@@ -45,15 +58,17 @@ const MATRIX: Record<AppRole, Capability[]> = {
     "createQuotation",
     "createTestDrive",
   ],
-  VENDEDOR: [
+  VENDEDORA: [
     "manageLeads",
     "changeVehicleStock",
     "createQuotation",
     "createTestDrive",
   ],
-  ADMINISTRATIVO: [
-    "seeAllLeads",
-    // solo lectura: sin manage* ni create*
+  PLANES: [
+    "manageLeads",
+    "changeVehicleStock",
+    "createQuotation",
+    "createTestDrive",
   ],
 };
 

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { env } from "@/shared/config/env";
 import {
   seedActivities,
   seedLeads,
@@ -74,9 +75,9 @@ export const useAppStore = create<AppState>()(
       activities: [],
 
       signIn: (email, fullName, extras) => {
-        // bootstrap demo data if first sign-in
+        // bootstrap demo data only in mock mode and if first sign-in
         const hasOrg = get().organization;
-        if (!hasOrg) {
+        if (env.useMockApi && !hasOrg) {
           set({
             organization: seedOrganization,
             members: seedMembers,
@@ -87,13 +88,13 @@ export const useAppStore = create<AppState>()(
             activities: seedActivities,
           });
         }
-        const org = get().organization!;
+        const org = get().organization;
         set({
           user: {
             id: extras?.userId ? String(extras.userId) : "u-current",
             email,
             fullName: fullName || email.split("@")[0] || "Usuario",
-            organizationId: org.id,
+            organizationId: org?.id ?? "org-unknown",
             role: extras?.role,
             tenantId: extras?.tenantId,
           },
@@ -120,7 +121,7 @@ export const useAppStore = create<AppState>()(
                   organizationId: org.id,
                   fullName: currentUser.fullName,
                   email: currentUser.email,
-                  role: "owner",
+                  role: "ADMIN_SISTEMA",
                 },
               ]
             : [],
@@ -205,7 +206,7 @@ export const useAppStore = create<AppState>()(
         set((s) => ({ testDrives: [td, ...s.testDrives] }));
         get().pushActivity({
           leadId: t.leadId,
-          type: "test_drive",
+          type: "test_drive_agendado",
           message: `Test drive agendado`,
           actorId: get().user?.id,
         });

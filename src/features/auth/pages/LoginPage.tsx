@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight, Mail, Lock } from "lucide-react";
+import { ArrowRight, Mail, Lock, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,19 +14,20 @@ export const LoginPage = () => {
   const navigate = useNavigate();
   const signIn = useAppStore((s) => s.signIn);
   const org = useAppStore((s) => s.organization);
+  const [tenantCode, setTenantCode] = useState(env.useMockApi ? "DEMO" : "");
   const [email, setEmail] = useState(env.useMockApi ? "demo@concessio.app" : "");
   const [password, setPassword] = useState(env.useMockApi ? "demo1234" : "");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      toast({ title: "Completá email y contraseña", variant: "destructive" });
+    if (!tenantCode || !email || !password) {
+      toast({ title: "Completá código de empresa, email y contraseña", variant: "destructive" });
       return;
     }
     setLoading(true);
     try {
-      const session = await authService.login({ email, password });
+      const session = await authService.login({ tenantCode, email, password });
       signIn(session.email, session.fullName, {
         role: session.role,
         tenantId: session.tenantId,
@@ -51,6 +52,21 @@ export const LoginPage = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-1.5">
+          <Label htmlFor="tenant-code">Código de empresa</Label>
+          <div className="relative">
+            <Building className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              id="tenant-code"
+              type="text"
+              autoComplete="off"
+              value={tenantCode}
+              onChange={(e) => setTenantCode(e.target.value)}
+              className="h-11 bg-surface-1/60 pl-9"
+            />
+          </div>
+        </div>
+
         <div className="space-y-1.5">
           <Label htmlFor="email">Email</Label>
           <div className="relative">

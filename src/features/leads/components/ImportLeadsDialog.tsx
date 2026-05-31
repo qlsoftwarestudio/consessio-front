@@ -14,13 +14,13 @@ import { excelService } from "../api/excel.service";
 import { useQueryClient } from "@tanstack/react-query";
 import { leadsKeys } from "../hooks/use-leads";
 import { toast } from "@/hooks/use-toast";
-import type { ApiExcelUploadResult } from "@/shared/api/types";
+import type { ApiExcelUpload } from "@/shared/api/types";
 
 export const ImportLeadsDialog = () => {
   const [open, setOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<ApiExcelUploadResult | null>(null);
+  const [result, setResult] = useState<ApiExcelUpload | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const qc = useQueryClient();
 
@@ -40,11 +40,11 @@ export const ImportLeadsDialog = () => {
     setLoading(true);
     setResult(null);
     try {
-      const res = await excelService.uploadLeads(file);
+      const res = await excelService.uploadFile(file);
       setResult(res);
       qc.invalidateQueries({ queryKey: leadsKeys.all });
       qc.invalidateQueries({ queryKey: ["dashboard"] });
-      toast({ title: "Importación finalizada", description: res.message });
+      toast({ title: "Importación finalizada", description: `${res.processedCount ?? 0} leads procesados` });
     } catch {
       // toast ya disparado por http-client
     } finally {
@@ -91,18 +91,12 @@ export const ImportLeadsDialog = () => {
             <div className="space-y-2 rounded-lg border border-border/60 bg-surface-1/50 p-4 text-sm">
               <div className="flex items-center gap-2 text-success">
                 <CheckCircle2 className="h-4 w-4" />
-                <span className="font-medium">{result.processed} procesados</span>
+                <span className="font-medium">{result.processedCount ?? 0} procesados</span>
               </div>
-              {result.duplicates > 0 && (
-                <div className="flex items-center gap-2 text-warning">
-                  <AlertCircle className="h-4 w-4" />
-                  <span>{result.duplicates} duplicados ignorados</span>
-                </div>
-              )}
-              {result.errors > 0 && (
+              {result.errorCount && result.errorCount > 0 && (
                 <div className="flex items-center gap-2 text-destructive">
                   <AlertCircle className="h-4 w-4" />
-                  <span>{result.errors} errores</span>
+                  <span>{result.errorCount} errores</span>
                 </div>
               )}
             </div>

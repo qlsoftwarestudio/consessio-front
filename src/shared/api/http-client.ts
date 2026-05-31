@@ -4,12 +4,12 @@ import type { ApiError } from "./types";
 
 const SESSION_EVENT = "concessio:session-expired";
 
-interface SessionPayload {
+export interface SessionPayload {
   token: string;
-  email: string;
-  role: string;
-  tenantId: number;
-  userId: number;
+  email?: string;
+  role?: string;
+  tenantId?: number;
+  userId?: number;
 }
 
 const readSession = (): SessionPayload | null => {

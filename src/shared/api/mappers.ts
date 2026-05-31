@@ -39,19 +39,30 @@ const LEAD_STATUS_TO_API: Record<LeadStatus, ApiLeadStatus> = {
   new: "NUEVO",
   contacted: "CONTACTADO",
   qualified: "EN_SEGUIMIENTO",
-  "test-drive": "TEST_DRIVE",
+  "test-drive-agendado": "TEST_DRIVE_AGENDADO",
+  "test-drive-completado": "TEST_DRIVE_COMPLETADO",
   quoted: "COTIZADO",
+  negociacion: "NEGOCIACION",
+  reservado: "RESERVADO",
+  "documentacion-completa": "DOCUMENTACION_COMPLETA",
   won: "ENTREGADO",
+  "no-contesta": "NO_CONTESTA",
+  cancelado: "CANCELADO",
   lost: "DESCARTADO",
 };
 const LEAD_STATUS_FROM_API: Record<ApiLeadStatus, LeadStatus> = {
   NUEVO: "new",
   CONTACTADO: "contacted",
   EN_SEGUIMIENTO: "qualified",
-  TEST_DRIVE: "test-drive",
+  TEST_DRIVE_AGENDADO: "test-drive-agendado",
+  TEST_DRIVE_COMPLETADO: "test-drive-completado",
   COTIZADO: "quoted",
-  NEGOCIACION: "quoted", // mapeo razonable: en negociación = cotizado avanzado
+  NEGOCIACION: "negociacion",
+  RESERVADO: "reservado",
+  DOCUMENTACION_COMPLETA: "documentacion-completa",
   ENTREGADO: "won",
+  NO_CONTESTA: "no-contesta",
+  CANCELADO: "cancelado",
   DESCARTADO: "lost",
 };
 export const toApiLeadStatus = (s: LeadStatus): ApiLeadStatus => LEAD_STATUS_TO_API[s];
@@ -85,12 +96,17 @@ const VEHICLE_STATUS_TO_API: Record<VehicleStatus, ApiVehicleStatus> = {
   disponible: "DISPONIBLE",
   reservado: "RESERVADO",
   vendido: "VENDIDO",
+  "en-transito": "EN_TRANSITO",
+  "en-preparacion": "EN_PREPARACION",
+  "no-disponible": "NO_DISPONIBLE",
 };
 const VEHICLE_STATUS_FROM_API: Record<ApiVehicleStatus, VehicleStatus> = {
   DISPONIBLE: "disponible",
   RESERVADO: "reservado",
   VENDIDO: "vendido",
-  NO_DISPONIBLE: "vendido",
+  EN_TRANSITO: "en-transito",
+  EN_PREPARACION: "en-preparacion",
+  NO_DISPONIBLE: "no-disponible",
 };
 export const toApiVehicleStatus = (s: VehicleStatus): ApiVehicleStatus => VEHICLE_STATUS_TO_API[s];
 export const fromApiVehicleStatus = (s: ApiVehicleStatus): VehicleStatus => VEHICLE_STATUS_FROM_API[s];
@@ -111,10 +127,11 @@ export const fromApiQuotationType = (t: ApiQuotationType): QuotationType => QUOT
 
 // ==================== Test drive status ====================
 const TD_STATUS_FROM_API: Record<ApiTestDriveStatus, TestDriveStatus> = {
-  PENDIENTE: "agendado",
+  AGENDADO: "agendado",
+  CONFIRMADO: "confirmado",
   COMPLETADO: "realizado",
   CANCELADO: "cancelado",
-  NO_ASISTIO: "no-asistio",
+  NO_SHOW: "no-asistio",
 };
 export const fromApiTestDriveStatus = (s: ApiTestDriveStatus): TestDriveStatus =>
   TD_STATUS_FROM_API[s] ?? "agendado";
@@ -128,6 +145,7 @@ export const fromApiLead = (api: ApiLead, orgId: string): Lead => ({
   phone: api.phone ?? "",
   status: fromApiLeadStatus(api.status),
   source: fromApiLeadSource(api.source),
+  vehicleInterest: api.vehicleInterest,
   interestNote: api.notes,
   assignedTo: api.assignedTo ? String(api.assignedTo.id) : undefined,
   createdAt: api.createdAt,
@@ -202,16 +220,22 @@ export const fromApiQuotation = (api: ApiQuotation, orgId: string): Quotation =>
 
 // ==================== Activity ====================
 const ACTIVITY_TYPE_FROM_API: Record<ApiActivityType, Activity["type"]> = {
-  CREACION: "lead_created",
-  ACTUALIZACION: "note",
-  COTIZACION: "quotation",
-  TEST_DRIVE: "test_drive",
+  LEAD_CREATED: "lead_created",
+  LEAD_UPDATED: "lead_updated",
+  LEAD_ASSIGNED: "lead_assigned",
+  STATUS_CHANGED: "status_changed",
   LLAMADA: "call",
-  EMAIL: "note",
-  VISITA: "note",
-  ESTADO_CAMBIADO: "status_changed",
-  ASIGNACION: "note",
+  WHATSAPP: "whatsapp",
+  EMAIL: "email",
+  COTIZACION: "quotation",
+  TEST_DRIVE_AGENDADO: "test_drive_agendado",
+  TEST_DRIVE_COMPLETADO: "test_drive_completado",
+  DOCUMENTO_SUBIDO: "documento_subido",
+  DOCUMENTO_VERIFICADO: "documento_verificado",
   NOTA: "note",
+  RESERVA: "reserva",
+  VENTA: "venta",
+  EXCEL_UPLOAD: "excel_upload",
 };
 
 export const fromApiActivity = (api: ApiActivity, orgId: string): Activity => ({
@@ -243,12 +267,7 @@ export const fromApiUser = (api: ApiUser, orgId: string): Member => ({
   organizationId: orgId,
   fullName: `${api.name ?? ""} ${api.lastname ?? ""}`.trim() || api.email,
   email: api.email,
-  role:
-    api.role === "ADMIN"
-      ? "owner"
-      : api.role === "GERENTE"
-        ? "manager"
-        : "seller",
+  role: api.role,
 });
 
 // ==================== Dashboard ====================
