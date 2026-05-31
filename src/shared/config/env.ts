@@ -11,7 +11,11 @@ const schema = z.object({
   VITE_AUTH_STORAGE_KEY: z.string().min(1).default("concessio_auth"),
 });
 
-const rawApiUrl = import.meta.env.VITE_API_BASE_URL as string | undefined;
+const rawApiUrl = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim();
+
+// eslint-disable-next-line no-console
+console.log("[Concessio] VITE_API_BASE_URL raw:", JSON.stringify(import.meta.env.VITE_API_BASE_URL));
+
 const enrichedEnv = {
   ...import.meta.env,
   VITE_API_BASE_URL: rawApiUrl || devFallbackUrl,
