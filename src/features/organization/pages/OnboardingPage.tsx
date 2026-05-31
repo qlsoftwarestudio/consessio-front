@@ -113,7 +113,7 @@ export const OnboardingPage = () => {
           adminName: data.firstName.trim(),
           adminLastname: data.lastName.trim(),
           adminEmail: data.email.trim(),
-          adminPassword: data.password,
+          password: data.password,
         });
         signIn(session.email, session.fullName, {
           role: session.role,

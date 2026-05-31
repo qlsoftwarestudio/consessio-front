@@ -40,7 +40,7 @@ export interface ApiOnboardingPayload {
   adminName: string;
   adminLastname: string;
   adminEmail: string;
-  adminPassword: string;
+  password: string;
 }
 
 // ==================== User ====================
