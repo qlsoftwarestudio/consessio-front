@@ -34,7 +34,8 @@ export const LeadDetailPage = () => {
   const { data: members = [] } = useMembers();
   const { data: quotationsData } = useQuotations();
   const { data: testDrivesData } = useTestDrives();
-  const activities = useAppStore((s) => s.activities.filter((a) => a.leadId === id));
+  const allActivities = useAppStore((s) => s.activities);
+  const activities = useMemo(() => allActivities.filter((a) => a.leadId === id), [allActivities, id]);
   const setLeadStatusMutation = useSetLeadStatus();
 
   const vehicles = vehiclesData?.items ?? [];
