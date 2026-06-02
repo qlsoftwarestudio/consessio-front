@@ -7,8 +7,8 @@ export class TestDrivesPage extends BasePage {
   }
 
   async goto() {
-    await this.page.goto("/test-drives");
-    await this.page.waitForURL("**/test-drives", { timeout: 10000 });
+    await this.page.goto("/app/test-drives");
+    await this.page.waitForURL("**/app/test-drives", { timeout: 10000 });
   }
 
   async clickNewTestDrive() {

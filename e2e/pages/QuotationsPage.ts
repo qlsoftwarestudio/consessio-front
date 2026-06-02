@@ -7,8 +7,8 @@ export class QuotationsPage extends BasePage {
   }
 
   async goto() {
-    await this.page.goto("/quotations");
-    await this.page.waitForURL("**/quotations", { timeout: 10000 });
+    await this.page.goto("/app/cotizaciones");
+    await this.page.waitForURL("**/app/cotizaciones", { timeout: 10000 });
   }
 
   async clickNewQuotation() {

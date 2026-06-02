@@ -7,8 +7,8 @@ export class LeadsPage extends BasePage {
   }
 
   async goto() {
-    await this.page.goto("/leads");
-    await this.page.waitForURL("**/leads", { timeout: 10000 });
+    await this.page.goto("/app/leads");
+    await this.page.waitForURL("**/app/leads", { timeout: 10000 });
   }
 
   async clickNewLead() {

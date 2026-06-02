@@ -7,8 +7,8 @@ export class VehiclesPage extends BasePage {
   }
 
   async goto() {
-    await this.page.goto("/vehicles");
-    await this.page.waitForURL("**/vehicles", { timeout: 10000 });
+    await this.page.goto("/app/vehiculos");
+    await this.page.waitForURL("**/app/vehiculos", { timeout: 10000 });
   }
 
   async clickNewVehicle() {

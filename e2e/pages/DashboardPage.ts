@@ -7,7 +7,7 @@ export class DashboardPage extends BasePage {
   }
 
   async expectOnDashboard() {
-    await this.page.waitForURL("**/dashboard", { timeout: 15000 });
+    await this.page.waitForURL("**/app", { timeout: 15000 });
     await this.page.waitForSelector("text=Dashboard", { timeout: 10000 });
   }
 
