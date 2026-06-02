@@ -3,4 +3,5 @@ export const e2eEnv = {
   apiBaseUrl: process.env.API_BASE_URL?.trim() || "https://api-consessio-production.up.railway.app",
   adminEmail: process.env.E2E_ADMIN_EMAIL?.trim() || "",
   adminPassword: process.env.E2E_ADMIN_PASSWORD?.trim() || "",
+  tenantCode: process.env.E2E_TENANT_CODE?.trim() || "",
 };
