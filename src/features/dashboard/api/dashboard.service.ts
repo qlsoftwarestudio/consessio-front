@@ -43,22 +43,22 @@ export const dashboardService = {
     let testDrivesPage: ApiPage<ApiTestDrive> = { content: [], totalElements: 0, number: 0, size: 0, totalPages: 0 };
 
     try {
-      leadStats = await http<Partial<Record<ApiLeadStatus, number>>>(ENDPOINTS.leads.statsByStatus);
+      leadStats = await http<Partial<Record<ApiLeadStatus, number>>>(ENDPOINTS.leads.statsByStatus, { silent: true });
     } catch {
       /* endpoint no disponible o vacío */
     }
     try {
-      vehiclesAvailable = await http<ApiPage<ApiVehicle>>(ENDPOINTS.vehicles.available, { query: { page: 0, size: 1 } });
+      vehiclesAvailable = await http<ApiPage<ApiVehicle>>(ENDPOINTS.vehicles.available, { query: { page: 0, size: 1 }, silent: true });
     } catch {
       /* endpoint no disponible */
     }
     try {
-      quotationsPage = await http<ApiPage<ApiQuotation>>(ENDPOINTS.quotations.base, { query: { page: 0, size: 1 } });
+      quotationsPage = await http<ApiPage<ApiQuotation>>(ENDPOINTS.quotations.base, { query: { page: 0, size: 1 }, silent: true });
     } catch {
       /* endpoint no disponible */
     }
     try {
-      testDrivesPage = await http<ApiPage<ApiTestDrive>>(ENDPOINTS.testDrives.base, { query: { page: 0, size: 100 } });
+      testDrivesPage = await http<ApiPage<ApiTestDrive>>(ENDPOINTS.testDrives.base, { query: { page: 0, size: 100 }, silent: true });
     } catch {
       /* endpoint no disponible */
     }
@@ -85,7 +85,11 @@ export const dashboardService = {
     const totalLeads = activeLeads + won + lost;
     const conversionRate = totalLeads > 0 ? (won / totalLeads) * 100 : 0;
 
-    const pendingTestDrives = testDrivesPage.content.filter(
+    // El backend /api/test-drives puede devolver un array plano [] en lugar de ApiPage
+    const testDriveList = Array.isArray(testDrivesPage)
+      ? testDrivesPage
+      : testDrivesPage.content;
+    const pendingTestDrives = testDriveList.filter(
       (t) => t.status === "AGENDADO" || t.status === "CONFIRMADO"
     ).length;
 
