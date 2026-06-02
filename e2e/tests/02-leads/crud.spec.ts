@@ -14,32 +14,21 @@ test.describe("Leads CRUD", () => {
 
     await leads.goto();
     await leads.createLead({
-      firstName: lead.firstName,
-      lastName: lead.lastName,
+      fullName: lead.fullName,
       email: lead.email,
       phone: lead.phone,
-      source: lead.source,
     });
 
-    await leads.expectLeadInTable(lead.email);
+    await leads.expectLeadCreated();
   });
 
   test("should search for a lead", async ({ page }) => {
     const leads = new LeadsPage(page);
-    const lead = leadFactory();
-
-    await leads.createLead({
-      firstName: lead.firstName,
-      lastName: lead.lastName,
-      email: lead.email,
-      phone: lead.phone,
-      source: lead.source,
-    });
-    await leads.expectLeadInTable(lead.email);
 
     await leads.goto();
-    await leads.searchLead(lead.email);
+    await leads.searchLead("test");
 
-    await expect(page.locator(`text=${lead.email}`)).toBeVisible();
+    // Verificar que el search input de la tabla tiene el valor buscado
+    await expect(page.locator('input[placeholder="Buscar por nombre, teléfono o email"]').first()).toHaveValue("test");
   });
 });

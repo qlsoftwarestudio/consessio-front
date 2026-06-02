@@ -39,9 +39,11 @@ import { useSearchStore } from "@/shared/store/search-store";
 import { PaginationBar } from "@/atomic-design/molecules/PaginationBar";
 import { useAuth } from "@/shared/auth/useAuth";
 import { RoleGate } from "@/shared/auth/RoleGate";
+import { useMembers } from "@/features/organization/hooks/use-members";
 
 export const LeadsPage = () => {
-  const members = useAppStore((s) => s.members);
+  const { data: membersData } = useMembers();
+  const members = membersData ?? [];
   const globalQuery = useSearchStore((s) => s.query);
   const setGlobalQuery = useSearchStore((s) => s.setQuery);
   const { can } = useAuth();

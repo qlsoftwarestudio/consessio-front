@@ -19,6 +19,7 @@ import { formatARS, formatDateTime, formatPhone, formatRelative } from "@/shared
 import type { LeadStatus } from "@/shared/types/domain";
 import { useAuth } from "@/shared/auth/useAuth";
 import { RoleGate } from "@/shared/auth/RoleGate";
+import { useMembers } from "@/features/organization/hooks/use-members";
 
 export const LeadDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -26,7 +27,7 @@ export const LeadDetailPage = () => {
   const { can } = useAuth();
   const lead = useAppStore((s) => s.leads.find((l) => l.id === id));
   const vehicles = useAppStore((s) => s.vehicles);
-  const members = useAppStore((s) => s.members);
+  const { data: members = [] } = useMembers();
   const quotations = useAppStore((s) => s.quotations.filter((q) => q.leadId === id));
   const testDrives = useAppStore((s) => s.testDrives.filter((t) => t.leadId === id));
   const activities = useAppStore((s) => s.activities.filter((a) => a.leadId === id));

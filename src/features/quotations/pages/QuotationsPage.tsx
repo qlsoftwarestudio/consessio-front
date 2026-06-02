@@ -4,7 +4,6 @@ import { FileText, Loader2, Plus } from "lucide-react";
 import { PageHeader } from "@/atomic-design/molecules/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useAppStore } from "@/shared/store/app-store";
 import { QUOTATION_TYPE_LABEL, ROUTES } from "@/shared/constants/domain";
 import { Price } from "@/atomic-design/atoms/Price";
 import { formatDate } from "@/shared/utils/format";
@@ -14,6 +13,8 @@ import { useQuotations } from "../hooks/use-quotations";
 import { useSearchStore } from "@/shared/store/search-store";
 import { PaginationBar } from "@/atomic-design/molecules/PaginationBar";
 import { RoleGate } from "@/shared/auth/RoleGate";
+import { useLeads } from "@/features/leads/hooks/use-leads";
+import { useVehicles } from "@/features/vehicles/hooks/use-vehicles";
 
 const STATUS_CLASS: Record<string, string> = {
   borrador: "bg-muted text-muted-foreground ring-border",
@@ -23,8 +24,10 @@ const STATUS_CLASS: Record<string, string> = {
 };
 
 export const QuotationsPage = () => {
-  const leads = useAppStore((s) => s.leads);
-  const vehicles = useAppStore((s) => s.vehicles);
+  const { data: leadsData } = useLeads();
+  const { data: vehiclesData } = useVehicles();
+  const leads = leadsData?.items ?? [];
+  const vehicles = vehiclesData?.items ?? [];
   const globalQuery = useSearchStore((s) => s.query);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);

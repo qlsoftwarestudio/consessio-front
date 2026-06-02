@@ -20,10 +20,10 @@ import {
 } from "@/components/ui/select";
 import { Plus } from "lucide-react";
 import { LEAD_SOURCES, LEAD_SOURCE_LABEL } from "@/shared/constants/domain";
-import { useAppStore } from "@/shared/store/app-store";
 import { toast } from "@/hooks/use-toast";
 import type { LeadSource } from "@/shared/types/domain";
 import { useCreateLead } from "../hooks/use-leads";
+import { useMembers } from "@/features/organization/hooks/use-members";
 
 interface Props {
   trigger?: React.ReactNode;
@@ -32,7 +32,7 @@ interface Props {
 
 export const NewLeadDialog = ({ trigger, onCreated }: Props) => {
   const [open, setOpen] = useState(false);
-  const members = useAppStore((s) => s.members);
+  const { data: members = [] } = useMembers();
   const createLead = useCreateLead();
 
   const [fullName, setFullName] = useState("");

@@ -8,18 +8,23 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useAppStore } from "@/shared/store/app-store";
 import { formatDateTime } from "@/shared/utils/format";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { RoleGate } from "@/shared/auth/RoleGate";
 import { useCreateTestDrive, useTestDrives } from "../hooks/use-test-drives";
+import { useLeads } from "@/features/leads/hooks/use-leads";
+import { useVehicles } from "@/features/vehicles/hooks/use-vehicles";
+import { useMembers } from "@/features/organization/hooks/use-members";
 
 const NewTestDriveDialog = () => {
   const [open, setOpen] = useState(false);
-  const leads = useAppStore((s) => s.leads);
-  const vehicles = useAppStore((s) => s.vehicles);
-  const members = useAppStore((s) => s.members);
+  const { data: leadsData } = useLeads();
+  const { data: vehiclesData } = useVehicles();
+  const { data: membersData } = useMembers();
+  const leads = leadsData?.items ?? [];
+  const vehicles = vehiclesData?.items ?? [];
+  const members = membersData ?? [];
   const create = useCreateTestDrive();
   const [leadId, setLeadId] = useState(leads[0]?.id ?? "");
   const [vehicleId, setVehicleId] = useState(vehicles[0]?.id ?? "");
@@ -92,8 +97,10 @@ const NewTestDriveDialog = () => {
 
 export const TestDrivesPage = () => {
   const { data: testDrives = [], isLoading } = useTestDrives();
-  const leads = useAppStore((s) => s.leads);
-  const vehicles = useAppStore((s) => s.vehicles);
+  const { data: leadsData } = useLeads();
+  const { data: vehiclesData } = useVehicles();
+  const leads = leadsData?.items ?? [];
+  const vehicles = vehiclesData?.items ?? [];
   const [cursor, setCursor] = useState(() => {
     const d = new Date(); d.setDate(1); return d;
   });

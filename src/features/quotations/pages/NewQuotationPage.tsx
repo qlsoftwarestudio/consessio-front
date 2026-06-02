@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useAppStore } from "@/shared/store/app-store";
 import { QUOTATION_TYPES, QUOTATION_TYPE_LABEL, ROUTES } from "@/shared/constants/domain";
 import { formatARS } from "@/shared/utils/format";
 import { Price } from "@/atomic-design/atoms/Price";
@@ -15,6 +14,8 @@ import { toast } from "@/hooks/use-toast";
 import type { QuotationType } from "@/shared/types/domain";
 import { useCreateQuotation } from "../hooks/use-quotations";
 import type { ApiPlanType } from "@/shared/api/types";
+import { useLeads } from "@/features/leads/hooks/use-leads";
+import { useVehicles } from "@/features/vehicles/hooks/use-vehicles";
 
 const PLAN_TYPES: ApiPlanType[] = ["100%", "70/30", "50/50", "ADQUIRIDO"];
 const PLAN_TYPE_DESC: Record<ApiPlanType, string> = {
@@ -29,8 +30,10 @@ const STEPS = ["Tipo", "Lead y vehículo", "Calculadora", "Resumen"] as const;
 export const NewQuotationPage = () => {
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const leads = useAppStore((s) => s.leads);
-  const vehicles = useAppStore((s) => s.vehicles);
+  const { data: leadsData } = useLeads();
+  const { data: vehiclesData } = useVehicles();
+  const leads = leadsData?.items ?? [];
+  const vehicles = vehiclesData?.items ?? [];
   const createQuotation = useCreateQuotation();
 
   const [step, setStep] = useState(0);

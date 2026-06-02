@@ -9,10 +9,12 @@ import { Avatar } from "@/atomic-design/atoms/Avatar";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useDashboard } from "../hooks/use-dashboard";
+import { useMembers } from "@/features/organization/hooks/use-members";
 
 export const DashboardPage = () => {
   const activities = useAppStore((s) => s.activities);
-  const members = useAppStore((s) => s.members);
+  const { data: membersData } = useMembers();
+  const members = membersData ?? [];
   const user = useAppStore((s) => s.user);
   const { data: snapshot, isLoading } = useDashboard();
 
