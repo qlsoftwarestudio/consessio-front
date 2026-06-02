@@ -8,9 +8,7 @@ test.describe("Leads CRUD", () => {
     await loginAsAdmin(page);
   });
 
-  test.fixme("should create a new lead", async ({ page }) => {
-    // FIXME: Frontend no carga organization del backend en signIn.
-    // AppLayout.tsx redirige a /onboarding, bloqueando acceso al dashboard.
+  test("should create a new lead", async ({ page }) => {
     const leads = new LeadsPage(page);
     const lead = leadFactory();
 
@@ -26,8 +24,7 @@ test.describe("Leads CRUD", () => {
     await leads.expectLeadInTable(lead.email);
   });
 
-  test.fixme("should search for a lead", async ({ page }) => {
-    // FIXME: Frontend no carga organization del backend en signIn.
+  test("should search for a lead", async ({ page }) => {
     const leads = new LeadsPage(page);
     const lead = leadFactory();
 

@@ -8,9 +8,7 @@ test.describe("Vehicles CRUD", () => {
     await loginAsAdmin(page);
   });
 
-  test.fixme("should create a new vehicle", async ({ page }) => {
-    // FIXME: Frontend no carga organization del backend en signIn.
-    // AppLayout.tsx redirige a /onboarding, bloqueando acceso al dashboard.
+  test("should create a new vehicle", async ({ page }) => {
     const vehicles = new VehiclesPage(page);
     const vehicle = vehicleFactory();
 

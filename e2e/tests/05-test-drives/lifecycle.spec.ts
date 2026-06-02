@@ -7,9 +7,7 @@ test.describe("Test Drives Lifecycle", () => {
     await loginAsAdmin(page);
   });
 
-  test.fixme("should create, confirm and complete a test drive", async ({ page }) => {
-    // FIXME: Frontend no carga organization del backend en signIn.
-    // AppLayout.tsx redirige a /onboarding, bloqueando acceso al dashboard.
+  test("should create, confirm and complete a test drive", async ({ page }) => {
     const testDrives = new TestDrivesPage(page);
 
     // Schedule test drive for tomorrow

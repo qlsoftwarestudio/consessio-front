@@ -7,9 +7,7 @@ test.describe("Quotations CRUD", () => {
     await loginAsAdmin(page);
   });
 
-  test.fixme("should create a new quotation", async ({ page }) => {
-    // FIXME: Frontend no carga organization del backend en signIn.
-    // AppLayout.tsx redirige a /onboarding, bloqueando acceso al dashboard.
+  test("should create a new quotation", async ({ page }) => {
     const quotations = new QuotationsPage(page);
 
     await quotations.goto();

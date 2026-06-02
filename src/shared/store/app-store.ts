@@ -75,9 +75,9 @@ export const useAppStore = create<AppState>()(
       activities: [],
 
       signIn: (email, fullName, extras) => {
-        // bootstrap demo data only in mock mode and if first sign-in
         const hasOrg = get().organization;
         if (env.useMockApi && !hasOrg) {
+          // bootstrap demo data only in mock mode and if first sign-in
           set({
             organization: seedOrganization,
             members: seedMembers,
@@ -86,6 +86,20 @@ export const useAppStore = create<AppState>()(
             quotations: seedQuotations,
             testDrives: seedTestDrives,
             activities: seedActivities,
+          });
+        } else if (!env.useMockApi && !hasOrg && extras?.tenantId) {
+          // En modo real, si el usuario tiene tenantId pero no hay org en el store,
+          // creamos una organización mínima para evitar redirección a /onboarding.
+          // FIXME: Idealmente el backend debería devolver datos de la org en login
+          // o debería existir un endpoint GET /organization para obtenerlos.
+          const orgId = String(extras.tenantId);
+          set({
+            organization: {
+              id: orgId,
+              name: "",
+              brands: [],
+              createdAt: new Date().toISOString(),
+            },
           });
         }
         const org = get().organization;
