@@ -15,38 +15,48 @@ export class VehiclesPage extends BasePage {
     await this.page.getByRole("button", { name: /nuevo vehículo/i }).click();
   }
 
+  // Los labels del diálogo son <div> genéricos, no <label>.
+  // Usamos selectores por role dentro del diálogo.
   async selectBrand(brand: string) {
-    await this.page.getByLabel("Marca").click();
+    // Primer combobox dentro del diálogo = Marca
+    await this.page.locator('[role="dialog"] [role="combobox"]').first().click();
     await this.page.getByRole("option", { name: brand }).click();
   }
 
   async fillModel(model: string) {
-    await this.page.getByLabel("Modelo").fill(model);
+    // Primer textbox dentro del diálogo = Modelo
+    await this.page.locator('[role="dialog"] [role="textbox"]').first().fill(model);
   }
 
   async fillVersion(version: string) {
-    await this.page.getByLabel("Versión").fill(version);
+    // Segundo textbox = Versión
+    await this.page.locator('[role="dialog"] [role="textbox"]').nth(1).fill(version);
   }
 
   async fillColor(color: string) {
-    await this.page.getByLabel("Color").fill(color);
+    // Tercer textbox = Color
+    await this.page.locator('[role="dialog"] [role="textbox"]').nth(2).fill(color);
   }
 
   async fillYear(year: string) {
-    await this.page.getByLabel("Año").fill(year);
+    // Primer spinbutton = Año
+    await this.page.locator('[role="dialog"] [role="spinbutton"]').first().fill(year);
   }
 
   async fillKm(km: string) {
-    await this.page.getByLabel("Km").fill(km);
+    // Segundo spinbutton = Km
+    await this.page.locator('[role="dialog"] [role="spinbutton"]').nth(1).fill(km);
   }
 
   async selectCondition(condition: string) {
-    await this.page.getByLabel("Condición").click();
+    // Segundo combobox = Condición
+    await this.page.locator('[role="dialog"] [role="combobox"]').nth(1).click();
     await this.page.getByRole("option", { name: condition }).click();
   }
 
   async fillPrice(price: string) {
-    await this.page.getByLabel("Precio (ARS)").fill(price);
+    // Tercer spinbutton = Precio (ARS)
+    await this.page.locator('[role="dialog"] [role="spinbutton"]').nth(2).fill(price);
   }
 
   async submitForm() {
