@@ -7,7 +7,6 @@ import { LeadStatusBadge } from "@/atomic-design/atoms/LeadStatusBadge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useAppStore } from "@/shared/store/app-store";
 import {
   LEAD_SOURCE_LABEL,
   LEAD_STATUSES,
@@ -19,19 +18,28 @@ import { formatARS, formatDateTime, formatPhone, formatRelative } from "@/shared
 import type { LeadStatus } from "@/shared/types/domain";
 import { useAuth } from "@/shared/auth/useAuth";
 import { RoleGate } from "@/shared/auth/RoleGate";
+import { useAppStore } from "@/shared/store/app-store";
 import { useMembers } from "@/features/organization/hooks/use-members";
+import { useLead, useSetLeadStatus } from "@/features/leads/hooks/use-leads";
+import { useVehicles } from "@/features/vehicles/hooks/use-vehicles";
+import { useQuotations } from "@/features/quotations/hooks/use-quotations";
+import { useTestDrives } from "@/features/test-drives/hooks/use-test-drives";
 
 export const LeadDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { can } = useAuth();
-  const lead = useAppStore((s) => s.leads.find((l) => l.id === id));
-  const vehicles = useAppStore((s) => s.vehicles);
+  const { data: lead, isLoading: leadLoading } = useLead(id);
+  const { data: vehiclesData } = useVehicles();
   const { data: members = [] } = useMembers();
-  const quotations = useAppStore((s) => s.quotations.filter((q) => q.leadId === id));
-  const testDrives = useAppStore((s) => s.testDrives.filter((t) => t.leadId === id));
+  const { data: quotationsData } = useQuotations();
+  const { data: testDrivesData } = useTestDrives();
   const activities = useAppStore((s) => s.activities.filter((a) => a.leadId === id));
-  const setLeadStatus = useAppStore((s) => s.setLeadStatus);
+  const setLeadStatusMutation = useSetLeadStatus();
+
+  const vehicles = vehiclesData?.items ?? [];
+  const quotations = quotationsData?.items?.filter((q) => q.leadId === id) ?? [];
+  const testDrives = testDrivesData?.filter((t) => t.leadId === id) ?? [];
 
   const vehicle = useMemo(() => vehicles.find((v) => v.id === lead?.interestVehicleId), [vehicles, lead]);
   const seller = useMemo(() => members.find((m) => m.id === lead?.assignedTo), [members, lead]);
@@ -191,7 +199,7 @@ export const LeadDetailPage = () => {
             </h3>
             <Select
               value={lead.status}
-              onValueChange={(v) => setLeadStatus(lead.id, v as LeadStatus)}
+              onValueChange={(v) => setLeadStatusMutation.mutate({ id: lead.id, status: v as LeadStatus })}
               disabled={!can("manageLeads")}
             >
               <SelectTrigger className="bg-surface-1/60"><SelectValue /></SelectTrigger>
