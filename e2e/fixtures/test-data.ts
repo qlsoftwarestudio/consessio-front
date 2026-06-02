@@ -17,12 +17,15 @@ export const leadFactory = (overrides?: Record<string, unknown>) => {
 };
 
 export const vehicleFactory = (overrides?: Record<string, unknown>) => ({
-  vin: `VIN${Date.now()}${Math.floor(Math.random() * 1000)}`,
-  brand: faker.vehicle.manufacturer(),
+  brand: "Toyota",
   model: faker.vehicle.model(),
+  version: "XLI",
+  color: "Blanco",
   year: 2024,
-  priceList: 25000000,
-  status: "DISPONIBLE" as string,
+  km: "0",
+  condition: "0km",
+  price: "25000000",
+  status: "disponible" as string,
   ...overrides,
 });
 

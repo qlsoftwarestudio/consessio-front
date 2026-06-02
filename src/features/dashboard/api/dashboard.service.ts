@@ -36,16 +36,32 @@ export const dashboardService = {
       };
     }
 
-    const [leadStats, vehiclesAvailable, quotationsPage, testDrivesPage] = await Promise.all([
-      http<Partial<Record<ApiLeadStatus, number>>>(ENDPOINTS.leads.statsByStatus),
-      http<ApiPage<ApiVehicle>>(ENDPOINTS.vehicles.available, { query: { page: 0, size: 1 } }),
-      http<ApiPage<ApiQuotation>>(ENDPOINTS.quotations.base, { query: { page: 0, size: 1 } }),
-      http<ApiPage<ApiTestDrive>>(ENDPOINTS.testDrives.base, { query: { page: 0, size: 100 } }),
-    ]);
+    // Fallback individual para cada endpoint: si uno falla, los demás siguen funcionando
+    let leadStats: Partial<Record<ApiLeadStatus, number>> = {};
+    let vehiclesAvailable: ApiPage<ApiVehicle> = { content: [], totalElements: 0, number: 0, size: 0, totalPages: 0 };
+    let quotationsPage: ApiPage<ApiQuotation> = { content: [], totalElements: 0, number: 0, size: 0, totalPages: 0 };
+    let testDrivesPage: ApiPage<ApiTestDrive> = { content: [], totalElements: 0, number: 0, size: 0, totalPages: 0 };
 
-    const monthStart = new Date();
-    monthStart.setDate(1);
-    monthStart.setHours(0, 0, 0, 0);
+    try {
+      leadStats = await http<Partial<Record<ApiLeadStatus, number>>>(ENDPOINTS.leads.statsByStatus);
+    } catch {
+      /* endpoint no disponible o vacío */
+    }
+    try {
+      vehiclesAvailable = await http<ApiPage<ApiVehicle>>(ENDPOINTS.vehicles.available, { query: { page: 0, size: 1 } });
+    } catch {
+      /* endpoint no disponible */
+    }
+    try {
+      quotationsPage = await http<ApiPage<ApiQuotation>>(ENDPOINTS.quotations.base, { query: { page: 0, size: 1 } });
+    } catch {
+      /* endpoint no disponible */
+    }
+    try {
+      testDrivesPage = await http<ApiPage<ApiTestDrive>>(ENDPOINTS.testDrives.base, { query: { page: 0, size: 100 } });
+    } catch {
+      /* endpoint no disponible */
+    }
 
     const pipeline = LEAD_STATUSES.map((status) => ({
       status,

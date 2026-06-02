@@ -3,7 +3,7 @@ import { http } from "@/shared/api/http-client";
 import { ENDPOINTS } from "@/shared/api/endpoints";
 import { env } from "@/shared/config/env";
 import { useAppStore } from "@/shared/store/app-store";
-import type { ApiUser } from "@/shared/api/types";
+import type { ApiUser, ApiPage } from "@/shared/api/types";
 import type { Member } from "@/shared/types/domain";
 
 const toMember = (u: ApiUser): Member => ({
@@ -25,8 +25,9 @@ export const useMembers = () => {
     queryKey: membersKeys.all,
     queryFn: async () => {
       if (env.useMockApi) return storeMembers;
-      const res = await http<ApiUser[]>(ENDPOINTS.users.base);
-      return res.map(toMember);
+      // El backend devuelve ApiPage<ApiUser>, no un array plano
+      const res = await http<ApiPage<ApiUser>>(ENDPOINTS.users.base);
+      return res.content.map(toMember);
     },
     // Si hay miembros en el store (mock), usarlos mientras carga
     initialData: env.useMockApi ? storeMembers : undefined,

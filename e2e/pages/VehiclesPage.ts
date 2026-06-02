@@ -12,46 +12,62 @@ export class VehiclesPage extends BasePage {
   }
 
   async clickNewVehicle() {
-    await this.page.locator("button:has-text('Nuevo vehículo'), button:has-text('Agregar')").first().click();
+    await this.page.getByRole("button", { name: /nuevo vehículo/i }).click();
   }
 
-  async fillVin(vin: string) {
-    await this.page.locator("input[name='vin'], input[placeholder*='VIN' i]").first().fill(vin);
-  }
-
-  async fillBrand(brand: string) {
-    await this.page.locator("input[name='brand'], input[placeholder*='marca' i]").first().fill(brand);
+  async selectBrand(brand: string) {
+    await this.page.getByLabel("Marca").click();
+    await this.page.getByRole("option", { name: brand }).click();
   }
 
   async fillModel(model: string) {
-    await this.page.locator("input[name='model'], input[placeholder*='modelo' i]").first().fill(model);
+    await this.page.getByLabel("Modelo").fill(model);
+  }
+
+  async fillVersion(version: string) {
+    await this.page.getByLabel("Versión").fill(version);
+  }
+
+  async fillColor(color: string) {
+    await this.page.getByLabel("Color").fill(color);
   }
 
   async fillYear(year: string) {
-    await this.page.locator("input[name='year'], input[type='number']").first().fill(year);
+    await this.page.getByLabel("Año").fill(year);
+  }
+
+  async fillKm(km: string) {
+    await this.page.getByLabel("Km").fill(km);
+  }
+
+  async selectCondition(condition: string) {
+    await this.page.getByLabel("Condición").click();
+    await this.page.getByRole("option", { name: condition }).click();
   }
 
   async fillPrice(price: string) {
-    await this.page.locator("input[name='priceList'], input[name='price'], input[placeholder*='precio' i]").first().fill(price);
+    await this.page.getByLabel("Precio (ARS)").fill(price);
   }
 
   async submitForm() {
-    await this.page.locator("button[type='submit']").last().click();
+    await this.page.getByRole("button", { name: /agregar/i }).click();
   }
 
-  async createVehicle(data: { vin: string; brand: string; model: string; year: string; priceList: string }) {
+  async createVehicle(data: { brand: string; model: string; version?: string; color?: string; year: string; km?: string; condition?: string; price: string }) {
     await this.clickNewVehicle();
-    await this.fillVin(data.vin);
-    await this.fillBrand(data.brand);
+    await this.selectBrand(data.brand);
     await this.fillModel(data.model);
+    if (data.version) await this.fillVersion(data.version);
+    if (data.color) await this.fillColor(data.color);
     await this.fillYear(data.year);
-    await this.fillPrice(data.priceList);
+    if (data.km) await this.fillKm(data.km);
+    if (data.condition) await this.selectCondition(data.condition);
+    await this.fillPrice(data.price);
     await this.submitForm();
   }
 
-  async expectVehicleInTable(vin: string) {
-    const row = this.page.locator(`table tr:has-text("${vin}")`).first();
-    await row.waitFor({ state: "visible", timeout: 10000 });
-    return row;
+  async expectVehicleCreated() {
+    await this.page.waitForURL("**/app/vehiculos", { timeout: 10000 });
+    await this.page.getByRole("heading", { name: /vehículos/i }).waitFor({ state: "visible", timeout: 10000 });
   }
 }

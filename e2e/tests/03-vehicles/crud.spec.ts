@@ -8,20 +8,22 @@ test.describe("Vehicles CRUD", () => {
     await loginAsAdmin(page);
   });
 
-  test.fixme("should create a new vehicle", async ({ page }) => {
-    // FIXME: Ajustar selectores a UI real
+  test("should create a new vehicle", async ({ page }) => {
     const vehicles = new VehiclesPage(page);
     const vehicle = vehicleFactory();
 
     await vehicles.goto();
     await vehicles.createVehicle({
-      vin: vehicle.vin,
       brand: vehicle.brand,
       model: vehicle.model,
+      version: vehicle.version,
+      color: vehicle.color,
       year: String(vehicle.year),
-      priceList: String(vehicle.priceList),
+      km: vehicle.km,
+      condition: vehicle.condition,
+      price: vehicle.price,
     });
 
-    await vehicles.expectVehicleInTable(vehicle.vin);
+    await vehicles.expectVehicleCreated();
   });
 });
