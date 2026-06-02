@@ -8,8 +8,8 @@ export async function loginAs(page: Page, tenantCode: string, email: string, pas
   await page.locator("input[type='email']").fill(email);
   await page.locator("input[type='password']").fill(password);
   await page.locator("button[type='submit']").click();
-  // FIXME: Backend redirige a /onboarding en lugar de /dashboard.
-  // Cuando se corrija, cambiar a: await page.waitForURL("**/dashboard", { timeout: 15000 });
+  // FIXME: Frontend no carga organization del backend en signIn (solo en mock mode).
+  // AppLayout.tsx redirige a /onboarding si !org.
   try {
     await page.waitForURL("**/dashboard", { timeout: 5000 });
   } catch {

@@ -4,7 +4,7 @@ import { DashboardPage } from "../../pages/DashboardPage";
 import { e2eEnv } from "../../utils/env";
 
 test.describe("Login", () => {
-  test("should login and redirect to onboarding (user needs tenant setup)", async ({ page }) => {
+  test("should login and redirect to onboarding (frontend bug: no carga org del backend)", async ({ page }) => {
     test.skip(!e2eEnv.tenantCode || !e2eEnv.adminEmail || !e2eEnv.adminPassword, "E2E credentials not configured");
 
     const login = new LoginPage(page);
@@ -12,10 +12,9 @@ test.describe("Login", () => {
     await login.goto();
     await login.login(e2eEnv.tenantCode, e2eEnv.adminEmail, e2eEnv.adminPassword);
 
-    // FIXME: El backend redirige a /onboarding después del login
-    // en lugar de /dashboard. Esto indica que el usuario no tiene
-    // un tenant completo. Cuando el backend corrija esto,
-    // actualizar a: await page.waitForURL("**/dashboard", { timeout: 15000 });
+    // FIXME: Frontend no carga organization del backend en signIn (solo en mock mode).
+    // AppLayout.tsx redirige a /onboarding si !org. Cuando se arregle,
+    // actualizar a: await dashboard.expectOnDashboard();
     await page.waitForURL("**/onboarding", { timeout: 15000 });
     await expect(page.locator("text=Datos de la empresa")).toBeVisible();
   });

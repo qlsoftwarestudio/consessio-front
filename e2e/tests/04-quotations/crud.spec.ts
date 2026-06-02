@@ -8,7 +8,8 @@ test.describe("Quotations CRUD", () => {
   });
 
   test.fixme("should create a new quotation", async ({ page }) => {
-    // FIXME: Login redirige a /onboarding en lugar de /dashboard.
+    // FIXME: Frontend no carga organization del backend en signIn.
+    // AppLayout.tsx redirige a /onboarding, bloqueando acceso al dashboard.
     const quotations = new QuotationsPage(page);
 
     await quotations.goto();

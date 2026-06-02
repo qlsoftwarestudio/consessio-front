@@ -9,7 +9,8 @@ test.describe("Vehicles CRUD", () => {
   });
 
   test.fixme("should create a new vehicle", async ({ page }) => {
-    // FIXME: Login redirige a /onboarding en lugar de /dashboard.
+    // FIXME: Frontend no carga organization del backend en signIn.
+    // AppLayout.tsx redirige a /onboarding, bloqueando acceso al dashboard.
     const vehicles = new VehiclesPage(page);
     const vehicle = vehicleFactory();
 

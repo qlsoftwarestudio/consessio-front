@@ -9,36 +9,31 @@ test.describe("Onboarding", () => {
   const admin = userFactory({ password: ADMIN_PASSWORD });
   const cuit = "30-12345678-9";
 
-  test.fixme(
-    "should complete onboarding and redirect to dashboard",
-    async ({ page }) => {
-      // FIXME: Backend bug — onboarding siempre genera tenant code '178'
-      // que ya existe en la DB. Esperar fix del backend para reactivar.
-      const onboarding = new OnboardingPage(page);
-      await onboarding.goto();
-      await onboarding.completeOnboarding({
-        businessName,
-        cuit,
-        firstName: admin.name,
-        lastName: admin.lastname,
-        email: admin.email,
-        password: admin.password,
-      });
-      await page.waitForURL("**/dashboard", { timeout: 15000 });
-    }
-  );
+  test("should complete onboarding and redirect to app", async ({ page }) => {
+    const onboarding = new OnboardingPage(page);
+    await onboarding.goto();
+    await onboarding.completeOnboarding({
+      businessName,
+      cuit,
+      firstName: admin.name,
+      lastName: admin.lastname,
+      email: admin.email,
+      password: admin.password,
+    });
+    await page.waitForURL("**/app", { timeout: 15000 });
+    await expect(page.locator("text=Dashboard")).toBeVisible();
+  });
 
-  test.fixme(
-    "should login with the created admin user",
-    async ({ page }) => {
-      // FIXME: Depende del test anterior (onboarding) que está bloqueado
-      // por bug del backend.
-      await page.goto("/login");
-      await page.locator("input[type='email']").fill(admin.email);
-      await page.locator("input[type='password']").fill(admin.password);
-      await page.locator("button[type='submit']").click();
-      await page.waitForURL("**/dashboard", { timeout: 15000 });
-      await expect(page.locator("text=Dashboard")).toBeVisible();
-    }
-  );
+  test.fixme("should login with the created admin user", async ({ page }) => {
+    // FIXME: Necesitamos el tenant code generado por el backend en el onboarding anterior.
+    // El backend no lo devuelve en la respuesta de onboarding. Requiere fix del backend
+    // o guardar el tenant code de alguna forma.
+    await page.goto("/login");
+    await page.getByLabel("Código de empresa").fill("DEM"); // placeholder — usar tenant code real
+    await page.locator("input[type='email']").fill(admin.email);
+    await page.locator("input[type='password']").fill(admin.password);
+    await page.locator("button[type='submit']").click();
+    await page.waitForURL("**/app", { timeout: 15000 });
+    await expect(page.locator("text=Dashboard")).toBeVisible();
+  });
 });

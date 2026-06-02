@@ -8,7 +8,8 @@ test.describe("Test Drives Lifecycle", () => {
   });
 
   test.fixme("should create, confirm and complete a test drive", async ({ page }) => {
-    // FIXME: Login redirige a /onboarding en lugar de /dashboard.
+    // FIXME: Frontend no carga organization del backend en signIn.
+    // AppLayout.tsx redirige a /onboarding, bloqueando acceso al dashboard.
     const testDrives = new TestDrivesPage(page);
 
     // Schedule test drive for tomorrow

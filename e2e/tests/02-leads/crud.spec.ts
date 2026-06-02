@@ -9,9 +9,8 @@ test.describe("Leads CRUD", () => {
   });
 
   test.fixme("should create a new lead", async ({ page }) => {
-    // FIXME: Login redirige a /onboarding en lugar de /dashboard.
-    // Necesitamos un usuario con tenant completo o que el backend
-    // arregle la redirección post-login.
+    // FIXME: Frontend no carga organization del backend en signIn.
+    // AppLayout.tsx redirige a /onboarding, bloqueando acceso al dashboard.
     const leads = new LeadsPage(page);
     const lead = leadFactory();
 
@@ -28,7 +27,7 @@ test.describe("Leads CRUD", () => {
   });
 
   test.fixme("should search for a lead", async ({ page }) => {
-    // FIXME: Login redirige a /onboarding en lugar de /dashboard.
+    // FIXME: Frontend no carga organization del backend en signIn.
     const leads = new LeadsPage(page);
     const lead = leadFactory();
 
