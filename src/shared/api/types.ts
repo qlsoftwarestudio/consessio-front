@@ -239,8 +239,10 @@ export type ApiTestDriveStatus = "AGENDADO" | "CONFIRMADO" | "COMPLETADO" | "CAN
 
 export interface ApiTestDrive {
   id: number;
-  scheduledDate: string;
-  duration: number;
+  scheduledAt?: string;
+  scheduledDate?: string;
+  durationMinutes?: number;
+  duration?: number;
   status: ApiTestDriveStatus;
   notes?: string;
   feedback?: string;

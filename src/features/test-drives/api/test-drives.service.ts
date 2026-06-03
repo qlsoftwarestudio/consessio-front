@@ -11,10 +11,11 @@ const orgId = () => useAppStore.getState().organization?.id ?? "org-mock";
 export const testDrivesService = {
   async list() {
     if (env.useMockApi) return useAppStore.getState().testDrives;
-    const res = await http<ApiPage<ApiTestDrive>>(ENDPOINTS.testDrives.base, {
+    const res = await http<ApiPage<ApiTestDrive> | ApiTestDrive[]>(ENDPOINTS.testDrives.base, {
       query: { page: 0, size: 100 },
     });
-    return res.content.map((t) => fromApiTestDrive(t, orgId()));
+    const items = Array.isArray(res) ? res : res.content;
+    return items.map((t) => fromApiTestDrive(t, orgId()));
   },
 
   async calendar(date: string) {
