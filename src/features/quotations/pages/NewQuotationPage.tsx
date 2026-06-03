@@ -40,13 +40,19 @@ export const NewQuotationPage = () => {
   const [type, setType] = useState<QuotationType>("contado");
   const [leadId, setLeadId] = useState<string>(params.get("leadId") ?? leads[0]?.id ?? "");
   const [vehicleId, setVehicleId] = useState<string>(vehicles[0]?.id ?? "");
-  const [discount, setDiscount] = useState(0);
-  const [downPayment, setDownPayment] = useState(0);
-  const [installments, setInstallments] = useState(36);
-  const [annualRate, setAnnualRate] = useState(40);
+  const [discountStr, setDiscountStr] = useState("0");
+  const [downPaymentStr, setDownPaymentStr] = useState("0");
+  const [installmentsStr, setInstallmentsStr] = useState("36");
+  const [annualRateStr, setAnnualRateStr] = useState("40");
   // Plan FIAT
   const [planType, setPlanType] = useState<ApiPlanType>("100%");
-  const [planInstallments, setPlanInstallments] = useState(84);
+  const [planInstallmentsStr, setPlanInstallmentsStr] = useState("84");
+
+  const discount = Number(discountStr) || 0;
+  const downPayment = Number(downPaymentStr) || 0;
+  const installments = Number(installmentsStr) || 0;
+  const annualRate = Number(annualRateStr) || 0;
+  const planInstallments = Number(planInstallmentsStr) || 0;
 
   const vehicle = useMemo(() => vehicles.find((v) => v.id === vehicleId), [vehicles, vehicleId]);
   const lead = useMemo(() => leads.find((l) => l.id === leadId), [leads, leadId]);
@@ -57,7 +63,6 @@ export const NewQuotationPage = () => {
   const monthlyInstallment = useMemo(() => {
     if (type === "contado" || installments <= 0) return 0;
     if (type === "plan-ahorro") {
-      // Estimación local mientras la API confirma el monto exacto
       const months = planInstallments || installments;
       return months > 0 ? Math.round(total / months) : 0;
     }
@@ -67,11 +72,20 @@ export const NewQuotationPage = () => {
     return Math.round(cuota);
   }, [type, financed, installments, annualRate, planInstallments, total]);
 
-  const next = () => setStep((s) => Math.min(STEPS.length - 1, s + 1));
+  const next = () => {
+    if (step === 1 && (!leadId || !vehicleId)) {
+      toast({ title: "Seleccioná lead y vehículo", variant: "destructive" });
+      return;
+    }
+    setStep((s) => Math.min(STEPS.length - 1, s + 1));
+  };
   const prev = () => setStep((s) => Math.max(0, s - 1));
 
   const submit = async () => {
-    if (!lead || !vehicle) return;
+    if (!lead || !vehicle) {
+      toast({ title: "Faltan datos", description: "Seleccioná lead y vehículo.", variant: "destructive" });
+      return;
+    }
     try {
       const created = await createQuotation.mutateAsync({
         type,
@@ -192,24 +206,24 @@ export const NewQuotationPage = () => {
             </div>
             <div className="grid gap-1.5">
               <Label>Descuento (ARS)</Label>
-              <Input type="number" value={discount} onChange={(e) => setDiscount(Number(e.target.value))} className="bg-surface-1/60" />
+              <Input type="number" value={discountStr} onChange={(e) => setDiscountStr(e.target.value)} className="bg-surface-1/60" />
             </div>
             {type !== "contado" && (
               <>
                 <div className="grid gap-1.5">
                   <Label>Anticipo (ARS)</Label>
-                  <Input type="number" value={downPayment} onChange={(e) => setDownPayment(Number(e.target.value))} className="bg-surface-1/60" />
+                  <Input type="number" value={downPaymentStr} onChange={(e) => setDownPaymentStr(e.target.value)} className="bg-surface-1/60" />
                 </div>
                 {type === "financiado" && (
                   <div className="grid gap-1.5">
                     <Label>Cuotas</Label>
-                    <Input type="number" value={installments} onChange={(e) => setInstallments(Number(e.target.value))} className="bg-surface-1/60" />
+                    <Input type="number" value={installmentsStr} onChange={(e) => setInstallmentsStr(e.target.value)} className="bg-surface-1/60" />
                   </div>
                 )}
                 {type === "financiado" && (
                   <div className="grid gap-1.5">
                     <Label>TNA (%)</Label>
-                    <Input type="number" value={annualRate} onChange={(e) => setAnnualRate(Number(e.target.value))} className="bg-surface-1/60" />
+                    <Input type="number" value={annualRateStr} onChange={(e) => setAnnualRateStr(e.target.value)} className="bg-surface-1/60" />
                   </div>
                 )}
                 {type === "plan-ahorro" && (
@@ -229,8 +243,8 @@ export const NewQuotationPage = () => {
                       <Label>Cantidad de cuotas</Label>
                       <Input
                         type="number"
-                        value={planInstallments}
-                        onChange={(e) => setPlanInstallments(Number(e.target.value))}
+                        value={planInstallmentsStr}
+                        onChange={(e) => setPlanInstallmentsStr(e.target.value)}
                         className="bg-surface-1/60"
                         placeholder="60, 84, 120…"
                       />

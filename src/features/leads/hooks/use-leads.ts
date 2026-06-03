@@ -53,3 +53,25 @@ export const useSetLeadStatus = () => {
     },
   });
 };
+
+export const useAssignLead = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, userId }: { id: string; userId: string }) =>
+      leadsService.assign(id, userId),
+    onMutate: async ({ id, userId }) => {
+      await qc.cancelQueries({ queryKey: leadsKeys.detail(id) });
+      const prev = qc.getQueryData<Lead>(leadsKeys.detail(id));
+      if (prev) qc.setQueryData(leadsKeys.detail(id), { ...prev, assignedTo: userId });
+      return { prev };
+    },
+    onError: (_e, vars, ctx) => {
+      if (ctx?.prev) qc.setQueryData(leadsKeys.detail(vars.id), ctx.prev);
+    },
+    onSettled: (_d, _e, vars) => {
+      qc.invalidateQueries({ queryKey: leadsKeys.all });
+      qc.invalidateQueries({ queryKey: leadsKeys.detail(vars.id) });
+      qc.invalidateQueries({ queryKey: ["dashboard"] });
+    },
+  });
+};

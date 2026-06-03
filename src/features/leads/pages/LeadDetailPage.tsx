@@ -18,25 +18,25 @@ import { formatARS, formatDateTime, formatPhone, formatRelative } from "@/shared
 import type { LeadStatus } from "@/shared/types/domain";
 import { useAuth } from "@/shared/auth/useAuth";
 import { RoleGate } from "@/shared/auth/RoleGate";
-import { useAppStore } from "@/shared/store/app-store";
 import { useMembers } from "@/features/organization/hooks/use-members";
-import { useLead, useSetLeadStatus } from "@/features/leads/hooks/use-leads";
+import { useLead, useSetLeadStatus, useAssignLead } from "@/features/leads/hooks/use-leads";
 import { useVehicles } from "@/features/vehicles/hooks/use-vehicles";
 import { useQuotations } from "@/features/quotations/hooks/use-quotations";
 import { useTestDrives } from "@/features/test-drives/hooks/use-test-drives";
+import { useActivitiesByLead } from "@/features/activities/hooks/use-activities";
 
 export const LeadDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { can } = useAuth();
-  const { data: lead, isLoading: leadLoading } = useLead(id);
+  const { data: lead } = useLead(id);
   const { data: vehiclesData } = useVehicles();
   const { data: members = [] } = useMembers();
   const { data: quotationsData } = useQuotations();
   const { data: testDrivesData } = useTestDrives();
-  const allActivities = useAppStore((s) => s.activities);
-  const activities = useMemo(() => allActivities.filter((a) => a.leadId === id), [allActivities, id]);
+  const { data: activities = [] } = useActivitiesByLead(id);
   const setLeadStatusMutation = useSetLeadStatus();
+  const assignLead = useAssignLead();
 
   const vehicles = vehiclesData?.items ?? [];
   const quotations = quotationsData?.items?.filter((q) => q.leadId === id) ?? [];
@@ -214,17 +214,28 @@ export const LeadDetailPage = () => {
             <h3 className="mb-2 mt-5 font-display text-sm font-semibold uppercase tracking-wider text-muted-foreground">
               Asignado a
             </h3>
-            <div className="flex items-center gap-2">
-              <Avatar name={seller?.fullName ?? "?"} size="sm" />
-              <div>
-                <p className="text-sm font-medium">{seller?.fullName ?? "Sin asignar"}</p>
-                {seller && <p className="text-xs text-muted-foreground">{seller.email}</p>}
+            {can("reassignLeads") ? (
+              <Select
+                value={lead.assignedTo ?? ""}
+                onValueChange={(v) => v && assignLead.mutate({ id: lead.id, userId: v })}
+              >
+                <SelectTrigger className="bg-surface-1/60">
+                  <SelectValue placeholder="Sin asignar" />
+                </SelectTrigger>
+                <SelectContent>
+                  {members.map((m) => (
+                    <SelectItem key={m.id} value={m.id}>{m.fullName}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Avatar name={seller?.fullName ?? "?"} size="sm" />
+                <div>
+                  <p className="text-sm font-medium">{seller?.fullName ?? "Sin asignar"}</p>
+                  {seller && <p className="text-xs text-muted-foreground">{seller.email}</p>}
+                </div>
               </div>
-            </div>
-            {!can("reassignLeads") && (
-              <p className="mt-2 text-[11px] text-muted-foreground">
-                Solo Admin/Gerente pueden reasignar leads.
-              </p>
             )}
           </div>
         </aside>
