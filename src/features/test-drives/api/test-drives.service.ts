@@ -44,7 +44,7 @@ export const testDrivesService = {
       });
     }
     const payload: ApiTestDriveCreatePayload = {
-      scheduledDate: input.scheduledAt,
+      scheduledAt: input.scheduledAt,
       duration: input.durationMin,
       notes: input.notes,
       lead: { id: Number(input.leadId) },

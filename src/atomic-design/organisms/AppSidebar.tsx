@@ -38,7 +38,6 @@ export function AppSidebar() {
   const collapsed = state === "collapsed";
   const location = useLocation();
   const user = useAppStore((s) => s.user);
-  const org = useAppStore((s) => s.organization);
   const { role, can } = useAuth();
   const visibleAdminItems = adminItems.filter((it) => can(it.cap));
 
@@ -106,9 +105,8 @@ export function AppSidebar() {
             {!collapsed && (
               <div className="min-w-0 flex-1">
                 <p className="truncate text-xs font-medium">{user.fullName}</p>
-                <p className="truncate text-[11px] text-muted-foreground">{org?.name}</p>
                 <span
-                  className={`mt-1 inline-flex rounded-full px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider ring-1 ring-inset ${ROLE_TONE[role]}`}
+                  className={`mt-0.5 inline-flex rounded-full px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider ring-1 ring-inset ${ROLE_TONE[role]}`}
                 >
                   {ROLE_LABEL[role]}
                 </span>
