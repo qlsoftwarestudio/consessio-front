@@ -123,7 +123,7 @@ export const http = async <T = unknown>(path: string, opts: RequestOpts = {}): P
       const text = await res.text().catch(() => "");
       throw new HttpError(errorMessage(res.status, text), res.status, text);
     }
-    return res as unknown as T;
+    return (await res.blob()) as unknown as T;
   }
 
   const contentType = res.headers.get("content-type") ?? "";
