@@ -16,6 +16,9 @@ export const CAPABILITIES = [
   "changeVehicleStock", // reservar / vender
   "createQuotation",    // crear cotizaciones
   "createTestDrive",    // agendar test drives
+  "uploadDocuments",
+  "verifyDocuments",
+  "deleteDocuments",
 ] as const;
 
 export type Capability = (typeof CAPABILITIES)[number];
@@ -33,6 +36,9 @@ const MATRIX: Record<AppRole, Capability[]> = {
     "changeVehicleStock",
     "createQuotation",
     "createTestDrive",
+    "uploadDocuments",
+    "verifyDocuments",
+    "deleteDocuments",
   ],
   GERENTE: [
     "manageUsers",
@@ -46,6 +52,9 @@ const MATRIX: Record<AppRole, Capability[]> = {
     "changeVehicleStock",
     "createQuotation",
     "createTestDrive",
+    "uploadDocuments",
+    "verifyDocuments",
+    "deleteDocuments",
   ],
   SUPERVISOR: [
     "viewUsers",
@@ -57,18 +66,23 @@ const MATRIX: Record<AppRole, Capability[]> = {
     "changeVehicleStock",
     "createQuotation",
     "createTestDrive",
+    "uploadDocuments",
+    "verifyDocuments",
+    "deleteDocuments",
   ],
   VENDEDORA: [
     "manageLeads",
     "changeVehicleStock",
     "createQuotation",
     "createTestDrive",
+    "uploadDocuments",
   ],
   PLANES: [
     "manageLeads",
     "changeVehicleStock",
     "createQuotation",
     "createTestDrive",
+    "uploadDocuments",
   ],
 };
 

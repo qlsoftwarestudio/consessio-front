@@ -1,7 +1,7 @@
 import { env } from "@/shared/config/env";
 import { http } from "@/shared/api/http-client";
 import { ENDPOINTS } from "@/shared/api/endpoints";
-import type { ApiDocument, ApiDocumentType } from "@/shared/api/types";
+import type { ApiDocument, ApiDocumentStats, ApiDocumentType } from "@/shared/api/types";
 
 export interface DocumentUploadInput {
   leadId: number | string;
@@ -29,6 +29,11 @@ export const documentsService = {
   async checklist(leadId: number | string): Promise<ApiDocumentType[]> {
     if (env.useMockApi) return [];
     return http<ApiDocumentType[]>(ENDPOINTS.documents.checklist(leadId));
+  },
+
+  async stats(leadId: number | string): Promise<ApiDocumentStats> {
+    if (env.useMockApi) return { totalDocs: 0, verifiedDocs: 0, pendingDocs: 0 };
+    return http<ApiDocumentStats>(ENDPOINTS.documents.stats(leadId));
   },
 
   async upload(input: DocumentUploadInput): Promise<ApiDocument> {

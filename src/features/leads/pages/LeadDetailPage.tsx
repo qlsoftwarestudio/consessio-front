@@ -24,6 +24,7 @@ import { useVehicles } from "@/features/vehicles/hooks/use-vehicles";
 import { useQuotations } from "@/features/quotations/hooks/use-quotations";
 import { useTestDrives } from "@/features/test-drives/hooks/use-test-drives";
 import { useActivitiesByLead } from "@/features/activities/hooks/use-activities";
+import { LeadDocumentsTab } from "@/features/documents/components/LeadDocumentsTab";
 
 export const LeadDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -102,6 +103,7 @@ export const LeadDetailPage = () => {
               <TabsTrigger value="activity">Actividad</TabsTrigger>
               <TabsTrigger value="quotations">Cotizaciones ({quotations.length})</TabsTrigger>
               <TabsTrigger value="testdrives">Test drives ({testDrives.length})</TabsTrigger>
+              <TabsTrigger value="documents">Documentos</TabsTrigger>
             </TabsList>
 
             <TabsContent value="activity" className="p-3">
@@ -159,6 +161,10 @@ export const LeadDetailPage = () => {
                   ))}
                 </ul>
               )}
+            </TabsContent>
+
+            <TabsContent value="documents">
+              <LeadDocumentsTab leadId={lead.id} />
             </TabsContent>
           </Tabs>
         </div>

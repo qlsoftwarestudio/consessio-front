@@ -278,13 +278,25 @@ export type ApiDocumentType =
 export interface ApiDocument {
   id: number;
   type: ApiDocumentType;
-  originalFilename: string;
-  storedFilename: string;
-  contentType: string;
-  size: number;
+  fileName?: string;
+  fileSize?: number;
+  mimeType?: string;
+  originalFilename?: string;
+  storedFilename?: string;
+  contentType?: string;
+  size?: number;
   uploadedAt: string;
-  verified?: boolean;
+  uploadedBy?: { id: number; name?: string; lastname?: string };
+  verified: boolean;
   verifiedAt?: string;
+  verifiedBy?: { id: number; name?: string; lastname?: string };
+  notes?: string;
+}
+
+export interface ApiDocumentStats {
+  totalDocs: number;
+  verifiedDocs: number;
+  pendingDocs: number;
 }
 
 // ==================== Excel ====================
