@@ -6,6 +6,7 @@ export const activitiesKeys = {
   all: ["activities"] as const,
   byLead: (leadId: number | string) => ["activities", "lead", leadId] as const,
   timeline: (leadId: number | string) => ["activities", "timeline", leadId] as const,
+  myActivities: ["activities", "my"] as const,
 };
 
 export const useActivitiesByLead = (leadId?: number | string) =>
@@ -20,6 +21,12 @@ export const useTimeline = (leadId?: number | string) =>
     enabled: Boolean(leadId),
     queryKey: activitiesKeys.timeline(leadId ?? ""),
     queryFn: () => activitiesService.timeline(leadId!),
+  });
+
+export const useMyActivities = () =>
+  useQuery({
+    queryKey: activitiesKeys.myActivities,
+    queryFn: () => activitiesService.myActivities(),
   });
 
 export const useCreateActivity = () => {

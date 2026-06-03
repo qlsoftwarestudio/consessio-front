@@ -69,7 +69,6 @@ export interface ApiUserCreatePayload {
 export type ApiLeadStatus =
   | "NUEVO"
   | "CONTACTADO"
-  | "EN_SEGUIMIENTO"
   | "COTIZADO"
   | "TEST_DRIVE_AGENDADO"
   | "TEST_DRIVE_COMPLETADO"
@@ -78,8 +77,7 @@ export type ApiLeadStatus =
   | "DOCUMENTACION_COMPLETA"
   | "ENTREGADO"
   | "NO_CONTESTA"
-  | "CANCELADO"
-  | "DESCARTADO";
+  | "CANCELADO";
 
 export type ApiLeadSource =
   | "WEB"

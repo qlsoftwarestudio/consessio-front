@@ -10,9 +10,11 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useDashboard } from "../hooks/use-dashboard";
 import { useMembers } from "@/features/organization/hooks/use-members";
+import { useMyActivities } from "@/features/activities/hooks/use-activities";
 
 export const DashboardPage = () => {
-  const activities = useAppStore((s) => s.activities);
+  const { data: activitiesData } = useMyActivities();
+  const activities = activitiesData ?? [];
   const { data: membersData } = useMembers();
   const members = membersData ?? [];
   const user = useAppStore((s) => s.user);

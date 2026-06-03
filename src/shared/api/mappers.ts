@@ -38,7 +38,7 @@ import type {
 const LEAD_STATUS_TO_API: Record<LeadStatus, ApiLeadStatus> = {
   new: "NUEVO",
   contacted: "CONTACTADO",
-  qualified: "EN_SEGUIMIENTO",
+  qualified: "CONTACTADO",
   "test-drive-agendado": "TEST_DRIVE_AGENDADO",
   "test-drive-completado": "TEST_DRIVE_COMPLETADO",
   quoted: "COTIZADO",
@@ -48,22 +48,20 @@ const LEAD_STATUS_TO_API: Record<LeadStatus, ApiLeadStatus> = {
   won: "ENTREGADO",
   "no-contesta": "NO_CONTESTA",
   cancelado: "CANCELADO",
-  lost: "DESCARTADO",
+  lost: "CANCELADO",
 };
 const LEAD_STATUS_FROM_API: Record<ApiLeadStatus, LeadStatus> = {
   NUEVO: "new",
   CONTACTADO: "contacted",
-  EN_SEGUIMIENTO: "qualified",
+  COTIZADO: "quoted",
   TEST_DRIVE_AGENDADO: "test-drive-agendado",
   TEST_DRIVE_COMPLETADO: "test-drive-completado",
-  COTIZADO: "quoted",
   NEGOCIACION: "negociacion",
   RESERVADO: "reservado",
   DOCUMENTACION_COMPLETA: "documentacion-completa",
   ENTREGADO: "won",
   NO_CONTESTA: "no-contesta",
   CANCELADO: "cancelado",
-  DESCARTADO: "lost",
 };
 export const toApiLeadStatus = (s: LeadStatus): ApiLeadStatus => LEAD_STATUS_TO_API[s];
 export const fromApiLeadStatus = (s: ApiLeadStatus): LeadStatus => LEAD_STATUS_FROM_API[s] ?? "new";
@@ -288,7 +286,7 @@ export const fromApiDashboard = (api: ApiDashboard): DashboardSnapshot => {
   const activeLeads =
     api.leads.total -
     (api.leads.byStatus.ENTREGADO ?? 0) -
-    (api.leads.byStatus.DESCARTADO ?? 0);
+    (api.leads.byStatus.CANCELADO ?? 0);
 
   return {
     activeLeads,
