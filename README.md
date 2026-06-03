@@ -1,3 +1,3 @@
-# Welcome to your Lovable project
+# Concessio
 
-TODO: Document your project here
+CRM premium para concesionarios. Gestión de leads, vehículos, cotizaciones, test drives y documentación.
