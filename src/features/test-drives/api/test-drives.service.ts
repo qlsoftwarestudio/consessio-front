@@ -45,7 +45,7 @@ export const testDrivesService = {
     }
     const payload: ApiTestDriveCreatePayload = {
       scheduledAt: input.scheduledAt,
-      duration: input.durationMin,
+      durationMinutes: input.durationMin,
       notes: input.notes,
       lead: { id: Number(input.leadId) },
       vehicle: { id: Number(input.vehicleId) },

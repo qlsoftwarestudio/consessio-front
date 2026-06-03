@@ -252,7 +252,7 @@ export interface ApiTestDrive {
 
 export interface ApiTestDriveCreatePayload {
   scheduledAt: string;
-  duration: number;
+  durationMinutes: number;
   notes?: string;
   lead: { id: number };
   vehicle: { id: number };
