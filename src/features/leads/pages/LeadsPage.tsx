@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Filter, Loader2, Phone, Search } from "lucide-react";
 import { PageHeader } from "@/atomic-design/molecules/PageHeader";
 import { Input } from "@/components/ui/input";
@@ -203,13 +203,13 @@ export const LeadsPage = () => {
                       onClick={() => navigate(ROUTES.leadDetail(l.id))}
                     >
                       <TableCell>
-                        <Link to={ROUTES.leadDetail(l.id)} className="flex items-center gap-3 hover:text-primary">
+                        <div className="flex items-center gap-3">
                           <Avatar name={l.fullName} size="sm" />
                           <div className="min-w-0">
                             <div className="truncate font-medium">{l.fullName}</div>
                             <div className="truncate text-xs text-muted-foreground">{formatPhone(l.phone)}</div>
                           </div>
-                        </Link>
+                        </div>
                       </TableCell>
                       <TableCell className="hidden sm:table-cell">
                         <LeadStatusBadge status={l.status} />

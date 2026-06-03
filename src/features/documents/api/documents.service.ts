@@ -38,12 +38,9 @@ export const documentsService = {
 
   async upload(input: DocumentUploadInput): Promise<ApiDocument> {
     const formData = new FormData();
-    const metadata = JSON.stringify({
-      lead: { id: Number(input.leadId) },
-      type: input.type,
-      notes: input.notes,
-    });
-    formData.append("document", metadata);
+    formData.append("leadId", String(input.leadId));
+    formData.append("type", input.type);
+    if (input.notes) formData.append("notes", input.notes);
     formData.append("file", input.file);
 
     return http<ApiDocument>(ENDPOINTS.documents.upload, {
