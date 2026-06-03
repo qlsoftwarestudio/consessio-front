@@ -23,3 +23,13 @@ export const useCreateQuotation = () => {
     },
   });
 };
+
+export const useMarkQuotationSent = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => quotationsService.markSent(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: quotationsKeys.all });
+    },
+  });
+};

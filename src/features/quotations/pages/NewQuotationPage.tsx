@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Check, Download, FileText } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Download, FileText, Loader2 } from "lucide-react";
 import { PageHeader } from "@/atomic-design/molecules/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,11 +11,12 @@ import { formatARS } from "@/shared/utils/format";
 import { Price } from "@/atomic-design/atoms/Price";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
-import type { QuotationType } from "@/shared/types/domain";
-import { useCreateQuotation } from "../hooks/use-quotations";
+import type { Quotation, QuotationType } from "@/shared/types/domain";
+import { useCreateQuotation, useMarkQuotationSent } from "../hooks/use-quotations";
 import type { ApiPlanType } from "@/shared/api/types";
 import { useLeads } from "@/features/leads/hooks/use-leads";
 import { useVehicles } from "@/features/vehicles/hooks/use-vehicles";
+import { downloadBlob, generateQuotationPDF } from "../utils/generate-quotation-pdf";
 
 const PLAN_TYPES: ApiPlanType[] = ["100%", "70/30", "50/50", "ADQUIRIDO"];
 const PLAN_TYPE_DESC: Record<ApiPlanType, string> = {
@@ -35,6 +36,7 @@ export const NewQuotationPage = () => {
   const leads = leadsData?.items ?? [];
   const vehicles = vehiclesData?.items ?? [];
   const createQuotation = useCreateQuotation();
+  const markQuotationSent = useMarkQuotationSent();
 
   const [step, setStep] = useState(0);
   const [type, setType] = useState<QuotationType>("contado");
@@ -106,9 +108,16 @@ export const NewQuotationPage = () => {
         planType: type === "plan-ahorro" ? planType : undefined,
         planInstallments: type === "plan-ahorro" ? planInstallments : undefined,
       });
+      await markQuotationSent.mutateAsync(created.id);
+      const pdfBlob = generateQuotationPDF(
+        { ...created, status: "enviada" } as Quotation,
+        lead.fullName,
+        `${vehicle.brand} ${vehicle.model} ${vehicle.version ?? ""}`.trim(),
+      );
+      downloadBlob(pdfBlob, `cotizacion-${created.id}.pdf`);
       toast({
-        title: "Cotización creada",
-        description: `${formatARS(created.totalArs)} para ${lead.fullName}`,
+        title: "Cotización creada y enviada",
+        description: `${formatARS(created.totalArs)} para ${lead.fullName}. PDF descargado.`,
       });
       navigate(ROUTES.quotations);
     } catch {
@@ -289,7 +298,32 @@ export const NewQuotationPage = () => {
                 </div>
               </div>
             </div>
-            <Button variant="outline" onClick={() => toast({ title: "PDF próximamente", description: "Descarga real en la próxima versión." })}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                const preview: Quotation = {
+                  id: "preview",
+                  organizationId: "preview",
+                  leadId: lead.id,
+                  vehicleId: vehicle.id,
+                  type,
+                  status: "borrador",
+                  listPriceArs: listPrice,
+                  discountArs: discount,
+                  downPaymentArs: type === "contado" ? total : downPayment,
+                  installments: type === "contado" ? undefined : type === "plan-ahorro" ? planInstallments : installments,
+                  installmentArs: type === "contado" ? undefined : monthlyInstallment,
+                  annualRate: type === "financiado" ? annualRate : undefined,
+                  totalArs: total,
+                  createdAt: new Date().toISOString(),
+                  createdBy: "",
+                };
+                downloadBlob(
+                  generateQuotationPDF(preview, lead.fullName, `${vehicle.brand} ${vehicle.model} ${vehicle.version ?? ""}`.trim()),
+                  "cotizacion-preview.pdf",
+                );
+              }}
+            >
               <Download className="mr-1 h-4 w-4" /> Descargar PDF (preview)
             </Button>
           </div>
@@ -305,7 +339,14 @@ export const NewQuotationPage = () => {
             Siguiente <ArrowRight className="ml-1 h-4 w-4" />
           </Button>
         ) : (
-          <Button onClick={submit} className="bg-gradient-gold text-primary-foreground shadow-amber">
+          <Button
+            onClick={submit}
+            disabled={createQuotation.isPending || markQuotationSent.isPending}
+            className="bg-gradient-gold text-primary-foreground shadow-amber"
+          >
+            {createQuotation.isPending || markQuotationSent.isPending ? (
+              <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+            ) : null}
             Confirmar cotización
           </Button>
         )}

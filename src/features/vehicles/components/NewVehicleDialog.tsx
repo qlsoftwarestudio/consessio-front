@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,36 +13,61 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { BRANDS, VEHICLE_STATUSES, VEHICLE_STATUS_LABEL } from "@/shared/constants/domain";
-import { useAppStore } from "@/shared/store/app-store";
 import { toast } from "@/hooks/use-toast";
 import type { VehicleCondition, VehicleStatus } from "@/shared/types/domain";
+import { useCreateVehicle } from "../hooks/use-vehicles";
 
 export const NewVehicleDialog = () => {
   const [open, setOpen] = useState(false);
-  const addVehicle = useAppStore((s) => s.addVehicle);
+  const createVehicle = useCreateVehicle();
   const [brand, setBrand] = useState<string>(BRANDS[0]);
   const [model, setModel] = useState("");
   const [version, setVersion] = useState("");
   const [year, setYear] = useState(new Date().getFullYear());
   const [km, setKm] = useState(0);
   const [condition, setCondition] = useState<VehicleCondition>("0km");
-  const [price, setPrice] = useState(0);
+  const [priceStr, setPriceStr] = useState("0");
   const [status, setStatus] = useState<VehicleStatus>("disponible");
   const [color, setColor] = useState("");
   const [stockCode, setStockCode] = useState("");
 
-  const submit = () => {
+  const price = Number(priceStr) || 0;
+
+  const reset = () => {
+    setBrand(BRANDS[0]);
+    setModel("");
+    setVersion("");
+    setYear(new Date().getFullYear());
+    setKm(0);
+    setCondition("0km");
+    setPriceStr("0");
+    setStatus("disponible");
+    setColor("");
+    setStockCode("");
+  };
+
+  const submit = async () => {
     if (!model.trim() || price <= 0) {
       toast({ title: "Completá modelo y precio", variant: "destructive" });
       return;
     }
-    addVehicle({
-      brand, model, version: version || undefined, year, km, condition,
-      priceArs: price, status, color: color || "—", stockCode: stockCode || `${brand.slice(0,2).toUpperCase()}-${Date.now().toString(36)}`,
-    });
-    toast({ title: "Vehículo agregado al stock" });
-    setOpen(false);
-    setModel(""); setVersion(""); setColor(""); setPrice(0);
+    try {
+      await createVehicle.mutateAsync({
+        vin: stockCode.trim() || `${brand.slice(0, 2).toUpperCase()}-${Date.now().toString(36)}`,
+        brand,
+        model,
+        year,
+        color: color || "—",
+        priceArs: price,
+        status,
+        branch: undefined,
+      });
+      toast({ title: "Vehículo agregado al stock" });
+      setOpen(false);
+      reset();
+    } catch {
+      /* error toast disparado por http-client */
+    }
   };
 
   return (
@@ -106,13 +131,16 @@ export const NewVehicleDialog = () => {
           </div>
           <div className="grid gap-1.5 col-span-2">
             <Label>Precio (ARS)</Label>
-            <Input type="number" value={price} onChange={(e) => setPrice(Number(e.target.value))} className="bg-surface-1/60" />
+            <Input type="number" value={priceStr} onChange={(e) => setPriceStr(e.target.value)} className="bg-surface-1/60" />
           </div>
         </div>
 
         <DialogFooter>
-          <Button variant="ghost" onClick={() => setOpen(false)}>Cancelar</Button>
-          <Button onClick={submit} className="bg-gradient-gold text-primary-foreground shadow-amber">Agregar</Button>
+          <Button variant="ghost" onClick={() => setOpen(false)} disabled={createVehicle.isPending}>Cancelar</Button>
+          <Button onClick={submit} disabled={createVehicle.isPending} className="bg-gradient-gold text-primary-foreground shadow-amber">
+            {createVehicle.isPending ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <Plus className="mr-1 h-4 w-4" />}
+            Agregar
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
