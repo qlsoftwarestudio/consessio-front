@@ -18,6 +18,7 @@ import { QuotationsPage } from "@/features/quotations/pages/QuotationsPage";
 import { NewQuotationPage } from "@/features/quotations/pages/NewQuotationPage";
 import { TestDrivesPage } from "@/features/test-drives/pages/TestDrivesPage";
 import { MembersPage } from "@/features/organization/pages/MembersPage";
+import { CopilotPage } from "@/features/copilot/pages/CopilotPage";
 import { queryClient } from "@/shared/api/query-client";
 import { onSessionExpired } from "@/shared/api/http-client";
 import { useAppStore } from "@/shared/store/app-store";
@@ -63,6 +64,7 @@ const App = () => (
               <Route path="cotizaciones/nueva" element={<NewQuotationPage />} />
             </Route>
             <Route path="test-drives" element={<TestDrivesPage />} />
+            <Route path="copilot" element={<CopilotPage />} />
             <Route element={<RequirePermission cap="viewUsers" />}>
               <Route path="usuarios" element={<MembersPage />} />
             </Route>

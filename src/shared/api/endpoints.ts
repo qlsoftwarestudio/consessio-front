@@ -89,4 +89,12 @@ export const ENDPOINTS = {
     kpis: "/api/dashboard/kpis",
     pipeline: "/api/dashboard/pipeline",
   },
+  copilot: {
+    dailySummary: "/api/copilot/daily-summary",
+    hotLeads: "/api/copilot/hot-leads",
+    abandonedLeads: "/api/copilot/abandoned-leads",
+    nextActions: "/api/copilot/next-actions",
+    myNextActions: "/api/copilot/my-next-actions",
+    ranking: "/api/copilot/ranking",
+  },
 } as const;

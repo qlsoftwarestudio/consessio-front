@@ -92,4 +92,5 @@ export const ROUTES = {
   newQuotation: "/app/cotizaciones/nueva",
   testDrives: "/app/test-drives",
   members: "/app/usuarios",
+  copilot: "/app/copilot",
 } as const;

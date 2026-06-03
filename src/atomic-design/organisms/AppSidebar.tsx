@@ -1,4 +1,4 @@
-import { Calendar, Car, FileText, LayoutDashboard, Users, UsersRound } from "lucide-react";
+import { Calendar, Car, FileText, LayoutDashboard, Sparkles, Users, UsersRound } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -27,6 +27,7 @@ const items = [
   { title: "Vehículos", url: ROUTES.vehicles, icon: Car },
   { title: "Cotizaciones", url: ROUTES.quotations, icon: FileText },
   { title: "Test drives", url: ROUTES.testDrives, icon: Calendar },
+  { title: "Copiloto", url: ROUTES.copilot, icon: Sparkles },
 ];
 
 const adminItems = [

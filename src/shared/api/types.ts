@@ -341,3 +341,62 @@ export interface ApiDashboard {
   };
   conversionRate: number;
 }
+
+// ==================== Copilot ====================
+export interface ApiCopilotDailySummary {
+  date: string;
+  newLeadsToday: number;
+  hotLeadsCount: number;
+  abandonedLeadsCount: number;
+  testDrivesToday: number;
+  pendingTestDrives: number;
+  salesThisMonth: number;
+  salesRevenueThisMonth: number;
+  headline: string;
+  highlights: string[];
+}
+
+export interface ApiCopilotHotLead {
+  leadId: number;
+  fullName: string;
+  phone: string;
+  status: string;
+  score: number;
+  reason: string;
+  suggestedAction: string;
+  assignedToName?: string;
+  vehicleInterest?: string;
+  lastContactAt?: string;
+}
+
+export interface ApiCopilotAbandonedLead {
+  leadId: number;
+  fullName: string;
+  phone: string;
+  status: string;
+  daysSinceLastContact: number;
+  assignedToName?: string;
+  suggestedAction: string;
+}
+
+export type ApiCopilotPriority = "ALTA" | "MEDIA" | "BAJA";
+
+export interface ApiCopilotNextAction {
+  leadId: number;
+  fullName: string;
+  status: string;
+  action: string;
+  priority: ApiCopilotPriority;
+  suggestedMessage?: string;
+  phone?: string;
+}
+
+export interface ApiCopilotRankingItem {
+  userId: number;
+  name: string;
+  leadsAssigned: number;
+  activitiesCount: number;
+  sales: number;
+  conversionRate: number;
+  revenue: number;
+}
