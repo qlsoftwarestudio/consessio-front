@@ -8,6 +8,7 @@ import { useAppStore } from "@/shared/store/app-store";
 import { ROUTES } from "@/shared/constants/domain";
 import { toast } from "@/hooks/use-toast";
 import { authService } from "@/features/auth/api/auth.service";
+import { HttpError } from "@/shared/api/http-client";
 import { env } from "@/shared/config/env";
 
 export const LoginPage = () => {
@@ -35,8 +36,17 @@ export const LoginPage = () => {
       });
       toast({ title: "Bienvenido a Concessio" });
       navigate(org ? ROUTES.dashboard : ROUTES.dashboard);
-    } catch {
-      // toast ya disparado por http-client
+    } catch (err) {
+      const status = err instanceof HttpError ? err.status : 0;
+      const description =
+        status === 401 || status === 400
+          ? "Email, contraseña o código de empresa incorrectos."
+          : status === 403
+          ? "Tu usuario no tiene acceso a esta cuenta."
+          : status === 0
+          ? "No se pudo conectar al servidor. Verificá tu conexión."
+          : "Algo salió mal. Intentá nuevamente en unos segundos.";
+      toast({ title: "No se pudo iniciar sesión", description, variant: "destructive" });
     } finally {
       setLoading(false);
     }
