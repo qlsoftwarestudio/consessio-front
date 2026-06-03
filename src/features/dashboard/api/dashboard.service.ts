@@ -53,7 +53,7 @@ export const dashboardService = {
       /* endpoint no disponible */
     }
     try {
-      quotationsPage = await http<ApiPage<ApiQuotation>>(ENDPOINTS.quotations.base, { query: { page: 0, size: 1 }, silent: true });
+      quotationsPage = await http<ApiPage<ApiQuotation>>(ENDPOINTS.quotations.base, { query: { page: 0, size: 100 }, silent: true });
     } catch {
       /* endpoint no disponible */
     }
@@ -85,18 +85,32 @@ export const dashboardService = {
     const totalLeads = activeLeads + won + lost;
     const conversionRate = totalLeads > 0 ? (won / totalLeads) * 100 : 0;
 
+    const monthStart = new Date();
+    monthStart.setDate(1);
+    monthStart.setHours(0, 0, 0, 0);
+    const quotationList = Array.isArray(quotationsPage)
+      ? quotationsPage
+      : quotationsPage.content;
+    const quotationsMonth = quotationList.length > 0
+      ? quotationList.filter((q) => new Date(q.createdAt) >= monthStart).length
+      : quotationsPage.totalElements;
+
     // El backend /api/test-drives puede devolver un array plano [] en lugar de ApiPage
     const testDriveList = Array.isArray(testDrivesPage)
       ? testDrivesPage
       : testDrivesPage.content;
-    const pendingTestDrives = testDriveList.filter(
+    const pendingTestDrivesFromAppointments = testDriveList.filter(
       (t) => t.status === "AGENDADO" || t.status === "CONFIRMADO"
     ).length;
+    const pendingTestDrivesFromLeadStatus =
+      (leadStats.TEST_DRIVE_AGENDADO ?? 0) +
+      (leadStats.RESERVADO ?? 0);
+    const pendingTestDrives = Math.max(pendingTestDrivesFromAppointments, pendingTestDrivesFromLeadStatus);
 
     return {
       activeLeads,
       availableVehicles: vehiclesAvailable.totalElements,
-      quotationsMonth: quotationsPage.totalElements,
+      quotationsMonth,
       pendingTestDrives,
       pipeline,
       conversionRate,

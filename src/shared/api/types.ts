@@ -251,7 +251,7 @@ export interface ApiTestDrive {
 }
 
 export interface ApiTestDriveCreatePayload {
-  scheduledDate: string;
+  scheduledAt: string;
   duration: number;
   notes?: string;
   lead: { id: number };

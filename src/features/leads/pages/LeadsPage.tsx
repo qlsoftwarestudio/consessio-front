@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Filter, Loader2, Phone, Search } from "lucide-react";
 import { PageHeader } from "@/atomic-design/molecules/PageHeader";
 import { Input } from "@/components/ui/input";
@@ -42,6 +42,7 @@ import { RoleGate } from "@/shared/auth/RoleGate";
 import { useMembers } from "@/features/organization/hooks/use-members";
 
 export const LeadsPage = () => {
+  const navigate = useNavigate();
   const { data: membersData } = useMembers();
   const members = membersData ?? [];
   const globalQuery = useSearchStore((s) => s.query);
@@ -196,7 +197,11 @@ export const LeadsPage = () => {
                 {items.map((l) => {
                   const seller = memberById(l.assignedTo);
                   return (
-                    <TableRow key={l.id} className="border-border/60">
+                    <TableRow
+                      key={l.id}
+                      className="cursor-pointer border-border/60"
+                      onClick={() => navigate(ROUTES.leadDetail(l.id))}
+                    >
                       <TableCell>
                         <Link to={ROUTES.leadDetail(l.id)} className="flex items-center gap-3 hover:text-primary">
                           <Avatar name={l.fullName} size="sm" />
@@ -218,7 +223,7 @@ export const LeadsPage = () => {
                       </TableCell>
                       <TableCell className="text-right">
                         <Button variant="ghost" size="icon" asChild>
-                          <a href={`tel:${l.phone}`}>
+                          <a href={`tel:${l.phone}`} onClick={(e) => e.stopPropagation()}>
                             <Phone className="h-4 w-4" />
                           </a>
                         </Button>
